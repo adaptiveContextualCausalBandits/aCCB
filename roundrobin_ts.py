@@ -5,7 +5,7 @@ import setup_contextualcausalbandit as setup, utilities
 
 def run_one_sim(exploration_budget, transition_matrix, reward_matrix):
     """
-    Here we will run one simulation of the algorithm which uses round robin at the start state, and round robin
+    Here we will run one simulation of the algorithm which uses round robin at the start state, and thompson sampling
     at the intermediate contexts.
 
     :param exploration_budget:
@@ -30,28 +30,53 @@ def run_one_sim(exploration_budget, transition_matrix, reward_matrix):
             np.random.multinomial(budget_per_intervention_at_state_0[intervention],
                                   transition_matrix[intervention], None)
     sampled_transition_probabilities = sampled_transition_matrix / budget_per_intervention_at_state_0[:, np.newaxis]
-    # print("budget_per_intervention_at_state_0", budget_per_intervention_at_state_0)
-    # print("sampled_transition_matrix", sampled_transition_matrix)
-    # print("sampled_transition_probabilities", sampled_transition_probabilities)
     num_exploration_per_intermediate_context = np.sum(sampled_transition_matrix, axis=0)
-    # print("num_exploration_per_intermediate_context",
-    #       num_exploration_per_intermediate_context)
-    sampled_total_reward_matrix = np.zeros(reward_matrix.shape)
-    budget_per_intervention_in_context = np.zeros(reward_matrix.shape, dtype=np.int32)
+
+    num_pulls_per_intervention_in_context = np.zeros(reward_matrix.shape, dtype=np.int32)
+    sampled_total_reward_matrix = np.zeros(reward_matrix.shape, dtype=np.int32)
+    # Initialize the ucb to some high value, so that all interventions are pulled first.
+    prior_success_per_intervention_in_context = np.ones(reward_matrix.shape, dtype=np.int32)
+    prior_failures_per_intervention_in_context = np.ones(reward_matrix.shape, dtype=np.int32)
+    sampled_beta_probs = np.random.beta(prior_success_per_intervention_in_context,
+                                        prior_failures_per_intervention_in_context)
+
     for context_index in range(num_intermediate_contexts):
-        budget_in_context = int(num_exploration_per_intermediate_context[context_index])
-        # distribute the budget equally amongst the interventions
-        budget_per_intervention_in_context[context_index, :] = budget_in_context // num_interventions * np.ones(
-            num_interventions, dtype=np.int32)
-        remaining_budget = budget_in_context % num_interventions
-        budget_per_intervention_in_context[context_index, :remaining_budget] += 1
+        context_reward = reward_matrix[context_index]
+        context_budget = int(num_exploration_per_intermediate_context[context_index])
+        # Run Thompson Sampling for this context for T time steps
+        for round in range(context_budget):
+            # Select the intervention with the highest sampled probability
+            intervention_to_pull = np.argmax(sampled_beta_probs[context_index,:])
+            expected_reward_of_ts_arm = context_reward[intervention_to_pull]
 
-        sampled_total_reward_matrix[context_index] = np.random.binomial(
-            budget_per_intervention_in_context[context_index, :], reward_matrix[context_index], None)
+            # Simulate pulling the selected arm and observing the reward (0 or 1)
+            reward = np.random.binomial(1, expected_reward_of_ts_arm)
 
-    sampled_average_reward_matrix = sampled_total_reward_matrix / budget_per_intervention_in_context
+            # Update the Beta distribution parameters based on the observed reward
+            if reward == 1:
+                prior_success_per_intervention_in_context[context_index, intervention_to_pull] += 1
+            else:
+                prior_failures_per_intervention_in_context[context_index, intervention_to_pull] += 1
+
+            # Update statistics
+            num_pulls_per_intervention_in_context[context_index, intervention_to_pull] += 1
+            sampled_total_reward_matrix[context_index, intervention_to_pull] += reward
+
+            # Update beta probabilities only for the pulled intervention
+            sampled_beta_probs[context_index,intervention_to_pull] = np.random.beta(
+                prior_success_per_intervention_in_context[context_index, intervention_to_pull],
+                prior_failures_per_intervention_in_context[context_index, intervention_to_pull])
+
+
+    # Instead of simply dividing, we want to divide where the denominator is non-zero
+    # sampled_average_reward_matrix = sampled_total_reward_matrix / num_pulls_per_intervention_in_context
+    sampled_average_reward_matrix = np.divide(sampled_total_reward_matrix,
+                                              num_pulls_per_intervention_in_context,
+                                              out=np.zeros_like(sampled_total_reward_matrix, dtype=np.float32),
+                                              where=(num_pulls_per_intervention_in_context != 0))
+
     # print("sampled_total_reward_matrix=", sampled_total_reward_matrix)
-    # print("budget_per_intervention_in_context=", budget_per_intervention_in_context)
+    # print("num_pulls_per_intervention_in_context=", num_pulls_per_intervention_in_context)
     # print("sampled_average_reward_matrix=", sampled_average_reward_matrix)
     return sampled_transition_probabilities, sampled_average_reward_matrix
 
@@ -90,9 +115,9 @@ if __name__ == "__main__":
 
     regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward)
     print("regret = ", regret)
-    num_sims = 1000
+    num_sims = 100
     average_regret = utilities.run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward,
                                                  stochastic_transition_matrix, reward_matrix,
-                                                 simulation_module="roundrobin_roundrobin")
+                                                 simulation_module="roundrobin_ts")
     print("average_regret=", average_regret)
     print("time taken to run = %0.6f seconds" % (time.time() - start_time))

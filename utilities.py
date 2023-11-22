@@ -1,5 +1,7 @@
 import numpy as np
 import importlib
+from gekko import GEKKO
+import cvxpy as cp
 
 
 def get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward=0.3):
@@ -23,7 +25,7 @@ def get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, 
 
 
 def run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward, stochastic_transition_matrix, reward_matrix,
-                  simulation_module="roundrobin_roundrobin"):
+                      simulation_module="roundrobin_roundrobin"):
     total_regret = 0
     mymodule = importlib.import_module(simulation_module)
     for i in range(num_sims):
@@ -33,3 +35,33 @@ def run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward, stochas
         total_regret += regret
     average_regret = total_regret / num_sims
     return average_regret
+
+
+def solveFConvexProgram(transition_matrix_estimate, causal_parameters_estimate):
+    numInterventions, numStates = transition_matrix_estimate.shape
+    f = cp.Variable(numInterventions)
+
+    ones = np.ones(numInterventions)
+    constraints = [0 <= f, f <= 1, f @ ones == 1]
+    MHalf = np.power(causal_parameters_estimate, 0.5)
+    A = transition_matrix_estimate @ MHalf
+    objective = cp.Minimize(cp.max(A @ (cp.power(transition_matrix_estimate.T @ f, -0.5))))
+    prob = cp.Problem(objective, constraints)
+    f.value = 0.5 * np.ones(numInterventions)
+    prob.solve(solver=cp.SCS, warm_start=True)
+    fStar = f.value
+    maximin = np.amax(transition_matrix_estimate @ MHalf @ (np.power((transition_matrix_estimate.T @ fStar), -0.5)))
+    return maximin, fStar
+
+
+def getFMaxMin(PHat):
+    numInterventions, numStates = PHat.shape
+    f = cp.Variable(numInterventions)
+    ones = np.ones(numInterventions)
+    constraints = [0 <= f, f <= 1, f @ ones == 1]
+    objective = cp.Maximize(cp.min(PHat.T @ f))
+    prob = cp.Problem(objective, constraints)
+    prob.solve()
+    ftilde = f.value
+    maximin = np.amin(PHat.T @ ftilde)
+    return maximin, ftilde
