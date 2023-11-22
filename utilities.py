@@ -24,14 +24,33 @@ def get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, 
     return 0
 
 
+def get_regret_simple(sampled_average_reward_vector, diff_in_best_reward=0.3):
+    """
+
+    :param num_exploration_per_intervention_at_intermediate_context:
+    :param sampled_average_reward_matrix:
+    :param reward_difference: difference between best expected reward and obtained reward (for example: 0.3)
+    :return: computed_regret: regret computed given the exploration
+    """
+    # Check if the best intervention across the interventions is 0 [corresponding to pair (0,0)]
+    if np.argmax(sampled_average_reward_vector) != 0:
+        return diff_in_best_reward
+    return 0
+
+
 def run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward, stochastic_transition_matrix, reward_matrix,
-                      simulation_module="roundrobin_roundrobin"):
+                      simulation_module="roundrobin_roundrobin", simple=False):
     total_regret = 0
     mymodule = importlib.import_module(simulation_module)
     for i in range(num_sims):
-        sampled_transition_probabilities, sampled_average_reward_matrix = \
-            mymodule.run_one_sim(exploration_budget, stochastic_transition_matrix, reward_matrix)
-        regret = get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward)
+        if not simple:
+            sampled_transition_probabilities, sampled_average_reward_matrix = \
+                mymodule.run_one_sim(exploration_budget, stochastic_transition_matrix, reward_matrix)
+            regret = get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward)
+        else:
+            sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, stochastic_transition_matrix,
+                                                                 reward_matrix)
+            regret = get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
         total_regret += regret
     average_regret = total_regret / num_sims
     return average_regret
