@@ -34,9 +34,10 @@ def run_one_sim(exploration_budget, transition_matrix, reward_matrix):
 
     num_pulls_per_intervention_in_context = np.zeros(reward_matrix.shape, dtype=np.int32)
     sampled_total_reward_matrix = np.zeros(reward_matrix.shape, dtype=np.int32)
-    # Initialize the ucb to some high value, so that all interventions are pulled first.
+    # Initialize the priors to all ones
     prior_success_per_intervention_in_context = np.ones(reward_matrix.shape, dtype=np.int32)
     prior_failures_per_intervention_in_context = np.ones(reward_matrix.shape, dtype=np.int32)
+    # Compute the initial beta values
     sampled_beta_probs = np.random.beta(prior_success_per_intervention_in_context,
                                         prior_failures_per_intervention_in_context)
 
@@ -45,7 +46,7 @@ def run_one_sim(exploration_budget, transition_matrix, reward_matrix):
         context_budget = int(num_exploration_per_intermediate_context[context_index])
         # Run Thompson Sampling for this context for T time steps
         for round in range(context_budget):
-            # Select the intervention with the highest sampled probability
+            # Select the intervention with the highest sampled beta value
             intervention_to_pull = np.argmax(sampled_beta_probs[context_index,:])
             expected_reward_of_ts_arm = context_reward[intervention_to_pull]
 

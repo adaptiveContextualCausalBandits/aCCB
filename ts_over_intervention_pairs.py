@@ -22,54 +22,64 @@ def run_one_sim(exploration_budget, transition_matrix, reward_matrix, exploratio
 
     num_pulls_per_intervention_pair = np.zeros(total_ucb_interventions, dtype=np.int32)
     sampled_total_reward_matrix = np.zeros(total_ucb_interventions, dtype=np.int32)
-    # Initialize the ucb to some high value, so that all interventions are pulled first.
-    ucb_per_intervention_pair = 5 * np.ones(total_ucb_interventions, dtype=np.int32)
+    # Initialize the priors to all ones
+    prior_success_per_intervention_in_context = np.ones(total_ucb_interventions, dtype=np.int32)
+    prior_failures_per_intervention_in_context = np.ones(total_ucb_interventions, dtype=np.int32)
+    # Compute the initial beta values
+    sampled_beta_probs = np.random.beta(prior_success_per_intervention_in_context,
+                                        prior_failures_per_intervention_in_context)
 
     # We now compute the effective reward matrix for each ucb intervention pair
     effective_rewards_for_intervention_pair = (transition_matrix @ reward_matrix).flatten()
-    print("effective_rewards_for_intervention_pair=",effective_rewards_for_intervention_pair)
+    # print("effective_rewards_for_intervention_pair=", effective_rewards_for_intervention_pair)
 
-    # Main UCB loop
+    # Main Thompson Sampling loop
     for t in range(exploration_budget):
-        # Select the arm with the maximum UCB value
-        intervention_to_pull = np.argmax(ucb_per_intervention_pair)
-        expected_reward_of_ucb_intervention = effective_rewards_for_intervention_pair[intervention_to_pull]
+        # Select the arm with the maximum sampled_beta_probs value
+        intervention_to_pull = np.argmax(sampled_beta_probs)
+        expected_reward_of_ts_arm = effective_rewards_for_intervention_pair[intervention_to_pull]
+
         # Simulate pulling the selected arm and observing the reward (0 or 1)
-        reward = np.random.binomial(1, expected_reward_of_ucb_intervention)
+        reward = np.random.binomial(1, expected_reward_of_ts_arm)
+
+        # Update the Beta distribution parameters based on the observed reward
+        if reward == 1:
+            prior_success_per_intervention_in_context[intervention_to_pull] += 1
+        else:
+            prior_failures_per_intervention_in_context[intervention_to_pull] += 1
 
         # Update statistics
         num_pulls_per_intervention_pair[intervention_to_pull] += 1
         sampled_total_reward_matrix[intervention_to_pull] += reward
 
-        # Update UCB value only for the pulled intervention
-        average_reward = sampled_total_reward_matrix[intervention_to_pull] / (
-                num_pulls_per_intervention_pair[intervention_to_pull] + 1e-6)
-        exploration_term = exploration_alpha * np.sqrt(
-            np.log(exploration_budget + 1) / (num_pulls_per_intervention_pair[intervention_to_pull] + 1e-6))
-        ucb_per_intervention_pair[intervention_to_pull] = average_reward + exploration_term
+        # Update beta probabilities only for the pulled intervention
+        sampled_beta_probs[intervention_to_pull] = np.random.beta(
+            prior_success_per_intervention_in_context[intervention_to_pull],
+            prior_failures_per_intervention_in_context[intervention_to_pull])
 
 
     # Instead of simply dividing, we want to divide where the denominator is non-zero
-    # sampled_average_reward_matrix = sampled_total_reward_matrix / num_pulls_per_intervention_in_context
-    sampled_average_reward_matrix = np.divide(sampled_total_reward_matrix,
+    # sampled_average_reward_vector = sampled_total_reward_matrix / num_pulls_per_intervention_in_context
+    sampled_average_reward_vector = np.divide(sampled_total_reward_matrix,
                                               num_pulls_per_intervention_pair,
                                               out=np.zeros_like(sampled_total_reward_matrix, dtype=np.float32),
                                               where=(num_pulls_per_intervention_pair != 0))
 
     # print("sampled_total_reward_matrix=", sampled_total_reward_matrix)
     # print("num_pulls_per_intervention_in_context=", num_pulls_per_intervention_in_context)
-    # print("sampled_average_reward_matrix=", sampled_average_reward_matrix)
-    return sampled_average_reward_matrix
+    # print("sampled_average_reward_vector=", sampled_average_reward_vector)
+    return sampled_average_reward_vector
 
 
 if __name__ == "__main__":
     start_time = time.time()
     np.random.seed(8)
     np.set_printoptions(precision=6, suppress=True, linewidth=200)
+    np.set_printoptions(threshold=np.inf)
 
     # Set up the variables required to run the simulation
-    num_intermediate_contexts = 25
-    num_causal_variables = 25
+    num_intermediate_contexts = 5
+    num_causal_variables = 5
     num_interventions = num_causal_variables * 2 + 1
     diff_prob_transition = 0.1
     default_reward = 0.5
@@ -81,20 +91,24 @@ if __name__ == "__main__":
     reward_matrix = setup.generate_reward_matrix(num_intermediate_contexts, num_interventions,
                                                  default_reward, diff_in_best_reward)
 
-    exploration_budget = 50000
+    exploration_budget = 10_000_000
     # deterministic transitions
     sampled_average_reward_vector = run_one_sim(exploration_budget, det_transition_matrix, reward_matrix)
 
     print("sampled_average_reward_vector, =", sampled_average_reward_vector)
+    regret = utilities.get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
+    print("regret = ", regret)
+
     # stochastic transitions
     sampled_average_reward_vector = run_one_sim(exploration_budget, stochastic_transition_matrix, reward_matrix)
     print("sampled_average_reward_vector, =", sampled_average_reward_vector)
 
     regret = utilities.get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
     print("regret = ", regret)
-    num_sims = 100
+    num_sims = 1
     average_regret = utilities.run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward,
                                                  stochastic_transition_matrix, reward_matrix,
-                                                 simulation_module="ucb_over_intervention_pair",simple=True)
+                                                 simulation_module="ts_over_intervention_pairs", simple=True)
     print("average_regret=", average_regret)
+    np.set_printoptions(threshold=False)
     print("time taken to run = %0.6f seconds" % (time.time() - start_time))
