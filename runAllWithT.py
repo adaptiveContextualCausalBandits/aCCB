@@ -102,16 +102,6 @@ if __name__ == "__main__":
                                                                        diff_in_best_reward)
         average_regret_matrix[budget_index] = avg_regret_for_models
 
-        # for model_num in range(len(models)):
-        #     simulation_module = models[model_num]
-        #     simple_flag = True if simulation_module in simple_modules else False
-        #
-        #     average_regret = utilities.run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward,
-        #                                                  stochastic_transition_matrix, reward_matrix,
-        #                                                  simulation_module=simulation_module, simple=simple_flag)
-        #
-        #     average_regret_matrix[budget_index, model_num] = average_regret
-
         # Set print options to display the entire array
         np.set_printoptions(threshold=np.inf)
         # Print the progress as a log
