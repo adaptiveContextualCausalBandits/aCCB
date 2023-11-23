@@ -74,7 +74,7 @@ if __name__ == "__main__":
     num_intermediate_contexts = 5
     num_causal_variables = 5
     num_interventions = num_causal_variables * 2 + 1
-    diff_prob_transition = 0.1
+    diff_prob_transition = 0.3
     default_reward = 0.5
     diff_in_best_reward = 0.3
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     reward_matrix = setup.generate_reward_matrix(num_intermediate_contexts, num_interventions,
                                                  default_reward, diff_in_best_reward)
 
-    exploration_budget = 10_000_000
+    exploration_budget = 5000
     # deterministic transitions
     sampled_average_reward_vector = run_one_sim(exploration_budget, det_transition_matrix, reward_matrix)
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     regret = utilities.get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
     print("regret = ", regret)
-    num_sims = 1
+    num_sims = 100
     average_regret = utilities.run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward,
                                                  stochastic_transition_matrix, reward_matrix,
                                                  simulation_module="ucb_over_intervention_pairs",simple=True)

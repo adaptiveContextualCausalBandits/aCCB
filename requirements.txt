@@ -1,4 +1,5 @@
 clarabel==0.6.0
+colorama==0.4.6
 cvxpy==1.4.1
 ecos==2.0.12
 gekko==1.0.6
@@ -8,3 +9,4 @@ pybind11==2.11.1
 qdldl==0.1.7.post0
 scipy==1.10.1
 scs==3.2.4
+tqdm==4.66.1

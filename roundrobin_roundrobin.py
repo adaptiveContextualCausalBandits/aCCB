@@ -49,7 +49,14 @@ def run_one_sim(exploration_budget, transition_matrix, reward_matrix):
         sampled_total_reward_matrix[context_index] = np.random.binomial(
             budget_per_intervention_in_context[context_index, :], reward_matrix[context_index], None)
 
-    sampled_average_reward_matrix = sampled_total_reward_matrix / budget_per_intervention_in_context
+
+    # Instead of simply dividing, we want to divide where the denominator is non-zero
+    # sampled_average_reward_matrix = sampled_total_reward_matrix / budget_per_intervention_in_context
+    sampled_average_reward_matrix = np.divide(sampled_total_reward_matrix,
+                                              budget_per_intervention_in_context,
+                                              out=np.zeros_like(sampled_total_reward_matrix, dtype=np.float32),
+                                              where=(budget_per_intervention_in_context != 0))
+
     # print("sampled_total_reward_matrix=", sampled_total_reward_matrix)
     # print("budget_per_intervention_in_context=", budget_per_intervention_in_context)
     # print("sampled_average_reward_matrix=", sampled_average_reward_matrix)

@@ -19,21 +19,39 @@ def get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, 
     # print("max_expected_reward_per_state=", max_expected_reward_per_state)
     expected_reward_per_intervention_at_state_0 = sampled_transition_probabilities @ max_expected_reward_per_state
     # print("expected_reward_per_intervention_at_state_0=", expected_reward_per_intervention_at_state_0)
-    if np.argmax(expected_reward_per_intervention_at_state_0) != 0:
+
+    # We want worst case, so we will take the last argmax index rather than the first.
+    # Reverse the vector
+    rev_expected_reward_per_intervention_at_state_0 = expected_reward_per_intervention_at_state_0[::-1]
+
+    # Find the index of the maximum value in the reversed vector
+    last_argmax_index = len(expected_reward_per_intervention_at_state_0) - 1 - np.argmax(
+        rev_expected_reward_per_intervention_at_state_0)
+
+    if last_argmax_index != 0:
         return diff_in_best_reward
     return 0
 
 
 def get_regret_simple(sampled_average_reward_vector, diff_in_best_reward=0.3):
     """
+    We check if the best intervention across the interventions is 0 [corresponding to pair (0,0)].
+    Then the regret is 0, else it is diff_in_best_reward
 
     :param num_exploration_per_intervention_at_intermediate_context:
     :param sampled_average_reward_matrix:
     :param reward_difference: difference between best expected reward and obtained reward (for example: 0.3)
     :return: computed_regret: regret computed given the exploration
+
     """
-    # Check if the best intervention across the interventions is 0 [corresponding to pair (0,0)]
-    if np.argmax(sampled_average_reward_vector) != 0:
+    # We want the last rather than the first instance of such a vector
+    # Reverse the vector
+    rev_sampled_average_reward_vector = sampled_average_reward_vector[::-1]
+
+    # Find the index of the maximum value in the reversed vector
+    last_argmax_index = len(sampled_average_reward_vector) - 1 - np.argmax(rev_sampled_average_reward_vector)
+
+    if last_argmax_index != 0:
         return diff_in_best_reward
     return 0
 
