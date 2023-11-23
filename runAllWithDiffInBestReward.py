@@ -52,14 +52,19 @@ if __name__ == "__main__":
     # models = ['ucb_over_intervention_pairs', 'ts_over_intervention_pairs']
 
     # Set up the variables required to run the simulation
-    num_intermediate_contexts_list = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 25, 50, 100]
+    diff_in_best_reward_list = [0.01] + [(x + 1) * 0.05 for x in range(9)]
+    # diff_in_best_reward_list = [0.01,0.1,0.45]
+
 
     # num_intermediate_contexts = 10
+    num_intermediate_contexts = 5
+    num_causal_variables = num_intermediate_contexts
+    num_interventions = num_causal_variables * 2 + 1
 
-    exploration_budget = 10_000
+    exploration_budget = 25_000
     diff_prob_transition = 0.1
     default_reward = 0.5
-    diff_in_best_reward = 0.3
+    # diff_in_best_reward = 0.3
 
     num_sims = 100
     # The below is a flag for models that treat the problem as a one stage problem
@@ -67,13 +72,11 @@ if __name__ == "__main__":
 
     for stochastic_flag in [True, False]:
         # The outputs are stored in the below matrix
-        average_regret_matrix = np.zeros((len(num_intermediate_contexts_list), len(models)), dtype=np.float32)
-        for index in tqdm(range(len(num_intermediate_contexts_list)), desc="Progress"):
-            num_intermediate_contexts = num_intermediate_contexts_list[index]
-            num_causal_variables = num_intermediate_contexts
-            num_interventions = num_causal_variables * 2 + 1
+        average_regret_matrix = np.zeros((len(diff_in_best_reward_list), len(models)), dtype=np.float32)
+        for index in tqdm(range(len(diff_in_best_reward_list)), desc="Progress"):
+            diff_in_best_reward = diff_in_best_reward_list[index]
 
-            print("\nnum_intermediate_contexts=", num_intermediate_contexts)
+            print("\ndiff_in_best_reward=", diff_in_best_reward)
             avg_regret_for_models = run_multiple_sims_multiple_models(models, num_sims, exploration_budget,
                                                                       num_intermediate_contexts,
                                                                       num_interventions,
@@ -94,20 +97,20 @@ if __name__ == "__main__":
 
         # Now we saved the obtained values to file.
         if stochastic_flag:
-            file_path = "outputs/model_regret_with_num_intermediate_contexts.txt"
+            file_path = "outputs/model_regret_with_diff_in_best_reward.txt"
         else:
-            file_path = "outputs/model_regret_with_num_intermediate_contexts_deterministic.txt"
+            file_path = "outputs/model_regret_with_diff_in_best_reward_deterministic.txt"
         # Headers for each column
-        headers = ['num_intermediate_contexts'] + models
+        headers = ['diff_in_best_reward'] + models
         # Prepend the row headings
-        average_regret_matrix_for_print = np.hstack(
-            (np.array(num_intermediate_contexts_list, dtype=np.float32).reshape(-1, 1),
-             average_regret_matrix))
+        average_regret_matrix_for_print = np.hstack((np.array(diff_in_best_reward_list).reshape(-1, 1),
+                                                    average_regret_matrix))
 
         # Open the file for writing
         with open(file_path, 'w') as file:
             # Write the headers as the first line
-            header_line = '\t'.join(headers)  # Use a tab separator
+            header_line = '\t'.join(
+                headers)  # Use a tab separator
             file.write(header_line + '\n')
 
             # noinspection PyTypeChecker

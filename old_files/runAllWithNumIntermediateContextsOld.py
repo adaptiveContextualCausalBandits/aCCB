@@ -6,14 +6,16 @@ import importlib
 from tqdm import tqdm
 
 
-def run_multiple_sims_multiple_models_deterministic(models, num_sims, exploration_budget, num_intermediate_contexts,
-                                                 num_interventions, default_reward, diff_in_best_reward):
+def run_multiple_sims_multiple_models_stochastic(models, num_sims, exploration_budget, num_intermediate_contexts,
+                                                 num_interventions, diff_prob_transition, default_reward,
+                                                 diff_in_best_reward):
     total_regret = np.zeros((len(models)), dtype=np.float32)
 
     for i in range(num_sims):
         # Generate the required matrices from the above hyperparameters
-        transition_matrix = setup.generate_deterministic_transition_matrix(num_intermediate_contexts,
-                                                                           num_interventions)
+        transition_matrix = setup.generate_stochastic_transition_matrix(num_intermediate_contexts,
+                                                                        num_interventions,
+                                                                        diff_prob_transition)
         reward_matrix = setup.generate_reward_matrix(num_intermediate_contexts, num_interventions,
                                                      default_reward, diff_in_best_reward)
         for model_num in range(len(models)):
@@ -63,10 +65,11 @@ if __name__ == "__main__":
         num_interventions = num_causal_variables * 2 + 1
 
         print("\nnum_intermediate_contexts=", num_intermediate_contexts)
-        avg_regret_for_models = run_multiple_sims_multiple_models_deterministic(models, num_sims, exploration_budget,
+        avg_regret_for_models = run_multiple_sims_multiple_models_stochastic(models, num_sims, exploration_budget,
                                                                              num_intermediate_contexts,
                                                                              num_interventions,
-                                                                             default_reward, diff_in_best_reward)
+                                                                             diff_prob_transition, default_reward,
+                                                                             diff_in_best_reward)
         average_regret_matrix[context_index] = avg_regret_for_models
 
         # Set print options to display the entire array
@@ -77,9 +80,12 @@ if __name__ == "__main__":
         np.set_printoptions(threshold=False)
 
     # Now we saved the obtained values to file.
-    file_path = "outputs/model_regret_with_num_intermediate_contexts_deterministic_transitions.txt"
+    file_path = "../outputs/model_regret_with_num_intermediate_contexts.txt"
     # Headers for each column
     headers = ['num_intermediate_contexts'] + models
+
+    # Prepend the row headings
+    average_regret_matrix_for_print = np.hstack(np.array(num_intermediate_contexts_list).reshape(-1, 1),average_regret_matrix)
     # Open the file for writing
     with open(file_path, 'w') as file:
         # Write the headers as the first line
@@ -88,6 +94,6 @@ if __name__ == "__main__":
 
         # noinspection PyTypeChecker
         # Save the matrix to the file
-        np.savetxt(file, average_regret_matrix, delimiter='\t', fmt='%0.6f')
+        np.savetxt(file, average_regret_matrix_for_print, delimiter='\t', fmt='%0.6f')
 
     print("time taken to run = %0.6f seconds" % (time.time() - start_time))

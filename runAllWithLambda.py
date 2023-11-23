@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_intermediate_contexts,
                                       num_interventions, diff_prob_transition, default_reward,
-                                      diff_in_best_reward, stochastic=True):
+                                      diff_in_best_reward, stochastic=True, mParam=2):
     total_regret = np.zeros((len(models)), dtype=np.float32)
 
     for i in range(num_sims):
@@ -28,10 +28,17 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
             simple_flag = True if model in simple_modules else False
             mymodule = importlib.import_module(model)
             if not simple_flag:
-                sampled_transition_probabilities, sampled_average_reward_matrix = \
-                    mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix)
-                regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
-                                              diff_in_best_reward)
+                if model == "convex_explorer":
+                    sampled_transition_probabilities, sampled_average_reward_matrix = \
+                        mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix,
+                                             m_parameter_at_intermediate_states=mParam)
+                    regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
+                                                  diff_in_best_reward)
+                else:
+                    sampled_transition_probabilities, sampled_average_reward_matrix = \
+                        mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix)
+                    regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
+                                                  diff_in_best_reward)
             else:
                 sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, transition_matrix,
                                                                      reward_matrix)
@@ -52,34 +59,51 @@ if __name__ == "__main__":
     # models = ['ucb_over_intervention_pairs', 'ts_over_intervention_pairs']
 
     # Set up the variables required to run the simulation
-    num_intermediate_contexts_list = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 25, 50, 100]
 
-    # num_intermediate_contexts = 10
+    num_intermediate_contexts = 10
+    num_causal_variables = num_intermediate_contexts
+    num_interventions = num_causal_variables * 2 + 1
 
-    exploration_budget = 10_000
+    exploration_budget = 7500
     diff_prob_transition = 0.1
     default_reward = 0.5
     diff_in_best_reward = 0.3
+    # Set the varying parameter
+    mParametersRange = np.array(range(num_intermediate_contexts, 1, -1))
+    # mParametersRange = [10,4,2] # testing parameter range
+    lambdaValues = np.zeros(len(mParametersRange))
 
-    num_sims = 100
+    num_sims = 500
     # The below is a flag for models that treat the problem as a one stage problem
     simple_modules = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
 
     for stochastic_flag in [True, False]:
         # The outputs are stored in the below matrix
-        average_regret_matrix = np.zeros((len(num_intermediate_contexts_list), len(models)), dtype=np.float32)
-        for index in tqdm(range(len(num_intermediate_contexts_list)), desc="Progress"):
-            num_intermediate_contexts = num_intermediate_contexts_list[index]
-            num_causal_variables = num_intermediate_contexts
-            num_interventions = num_causal_variables * 2 + 1
+        average_regret_matrix = np.zeros((len(mParametersRange), len(models)), dtype=np.float32)
+        for index in tqdm(range(len(mParametersRange)), desc="Progress"):
+            mParam = mParametersRange[index]
+            causal_parameters_vector = mParam * np.ones(num_intermediate_contexts, dtype=np.int8)
+            causal_parameters_diag_matrix = np.diag(causal_parameters_vector)
+            # Generate the required matrices from the above hyperparameters
+            if stochastic_flag:
+                transition_matrix_initialization = setup.generate_stochastic_transition_matrix(num_intermediate_contexts,
+                                                                                num_interventions,
+                                                                                diff_prob_transition)
+            else:
+                transition_matrix_initialization = setup.generate_deterministic_transition_matrix(num_intermediate_contexts,
+                                                                                   num_interventions)
 
-            print("\nnum_intermediate_contexts=", num_intermediate_contexts)
+
+            lambdaValue, _ = utilities.solveFConvexProgram(transition_matrix_initialization, causal_parameters_diag_matrix)
+            lambdaValues[index] = lambdaValue**2
+
+            print("\nmParam=", mParam)
             avg_regret_for_models = run_multiple_sims_multiple_models(models, num_sims, exploration_budget,
                                                                       num_intermediate_contexts,
                                                                       num_interventions,
                                                                       diff_prob_transition, default_reward,
                                                                       diff_in_best_reward,
-                                                                      stochastic=stochastic_flag)
+                                                                      stochastic=stochastic_flag, mParam=mParam)
 
             # In this case we need the avg regret as a ratio to diff in best reward
             avg_regret_for_models = avg_regret_for_models / diff_in_best_reward
@@ -94,20 +118,20 @@ if __name__ == "__main__":
 
         # Now we saved the obtained values to file.
         if stochastic_flag:
-            file_path = "outputs/model_regret_with_num_intermediate_contexts.txt"
+            file_path = "outputs/model_regret_with_lambda.txt"
         else:
-            file_path = "outputs/model_regret_with_num_intermediate_contexts_deterministic.txt"
+            file_path = "outputs/model_regret_lambda_deterministic.txt"
         # Headers for each column
-        headers = ['num_intermediate_contexts'] + models
+        headers = ['lambda'] + models
         # Prepend the row headings
-        average_regret_matrix_for_print = np.hstack(
-            (np.array(num_intermediate_contexts_list, dtype=np.float32).reshape(-1, 1),
-             average_regret_matrix))
+        average_regret_matrix_for_print = np.hstack((np.array(lambdaValues).reshape(-1, 1),
+                                                     average_regret_matrix))
 
         # Open the file for writing
         with open(file_path, 'w') as file:
             # Write the headers as the first line
-            header_line = '\t'.join(headers)  # Use a tab separator
+            header_line = '\t'.join(
+                headers)  # Use a tab separator
             file.write(header_line + '\n')
 
             # noinspection PyTypeChecker
