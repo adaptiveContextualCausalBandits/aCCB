@@ -25,7 +25,7 @@ ad to. At this time, certain details about the user are revealed to the advertis
 some user demographics, as well as certain details about their device. Based on these details, the advertiser may
 choose one particular ad to show the user. In case the user clicks the ad, the advertiser receives a reward. The goal of
 the learner is to find optimal choices for initial user preference, as well as ad-content such that user clicks are
-maximized. We illustrate this example through the advertiser-motivation Figure below where we indicate the choices
+maximized. We illustrate this example through the advertiser-motivation figure below where we indicate the choices
 available for template and content interventions.
 
 ![Advertiser Motivation Figure below](images/adCCB.svg "Motivation for Adaptive Causal Contextual Bandits through an advertising example.")
@@ -72,6 +72,7 @@ bandit algorithms. The results are detailed in the following plots:
 
 We welcome contributions from the community. If you would like to contribute, please fork the repository and submit a
 pull request.
+
 
 ## License
 
