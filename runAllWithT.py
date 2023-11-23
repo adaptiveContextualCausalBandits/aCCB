@@ -74,12 +74,10 @@ if __name__ == "__main__":
     models = ['roundrobin_roundrobin', 'roundrobin_ucb', 'roundrobin_ts',
               'ucb_over_intervention_pairs', 'ts_over_intervention_pairs', 'convex_explorer']
 
-    models = ['roundrobin_ucb', 'roundrobin_ts', 'ucb_over_intervention_pairs', 'ts_over_intervention_pairs']
+    # models = ['roundrobin_ts', 'ucb_over_intervention_pairs', 'ts_over_intervention_pairs']
 
     exploration_budgets = [250, 500, 1000, 2500, 5000, 7500, 10000, 12500, 15000, 20000, 25000, 50000, 100000]
 
-    exploration_budgets = [10_000_000, 5_000_000, 1_000_000, 500_000, 100_000]
-    exploration_budgets = [100_000]
     # Set up the variables required to run the simulation
     num_intermediate_contexts = 10
     num_causal_variables = 10
@@ -88,7 +86,7 @@ if __name__ == "__main__":
     default_reward = 0.5
     diff_in_best_reward = 0.3
 
-    num_sims = 10
+    num_sims = 500
     # The below is a flag for models that treat the problem as a one stage problem
     simple_modules = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
     # The outputs are stored in the below matrix

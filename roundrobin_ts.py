@@ -88,10 +88,10 @@ if __name__ == "__main__":
     np.set_printoptions(precision=6, suppress=True, linewidth=200)
 
     # Set up the variables required to run the simulation
-    num_intermediate_contexts = 25
-    num_causal_variables = 25
+    num_intermediate_contexts = 5
+    num_causal_variables = 5
     num_interventions = num_causal_variables * 2 + 1
-    diff_prob_transition = 0.1
+    diff_prob_transition = 0.3
     default_reward = 0.5
     diff_in_best_reward = 0.3
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     reward_matrix = setup.generate_reward_matrix(num_intermediate_contexts, num_interventions,
                                                  default_reward, diff_in_best_reward)
 
-    exploration_budget = 50000
+    exploration_budget = 1000000
     # deterministic transitions
     sampled_transition_probabilities, sampled_average_reward_matrix = \
         run_one_sim(exploration_budget, det_transition_matrix, reward_matrix)
@@ -111,8 +111,8 @@ if __name__ == "__main__":
     # stochastic transitions
     sampled_transition_probabilities, sampled_average_reward_matrix = \
         run_one_sim(exploration_budget, stochastic_transition_matrix, reward_matrix)
-    print("sampled_transition_probabilities, =", sampled_transition_probabilities)
-    print("sampled_average_reward_matrix, =", sampled_average_reward_matrix)
+    print("sampled_transition_probabilities =", sampled_transition_probabilities)
+    print("sampled_average_reward_matrix =", sampled_average_reward_matrix)
 
     regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward)
     print("regret = ", regret)

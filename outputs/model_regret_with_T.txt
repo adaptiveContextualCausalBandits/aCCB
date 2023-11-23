@@ -1,0 +1,2 @@
+exploration_budget	roundrobin_ts	ucb_over_intervention_pairs	ts_over_intervention_pairs
+0.300000	0.300000	0.300000
