@@ -104,7 +104,7 @@ if __name__ == "__main__":
     print("sampled_transition_probabilities, =", sampled_transition_probabilities)
     print("sampled_average_reward_matrix, =", sampled_average_reward_matrix)
 
-    regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward)
+    regret = utilities.get_prob_optimal_reward(sampled_transition_probabilities, sampled_average_reward_matrix)
     print("regret = ", regret)
     num_sims = 100
     average_regret = utilities.run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward,

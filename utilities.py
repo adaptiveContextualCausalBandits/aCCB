@@ -4,7 +4,7 @@ from gekko import GEKKO
 import cvxpy as cp
 
 
-def get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward=0.3):
+def get_prob_optimal_reward(sampled_transition_probabilities, sampled_average_reward_matrix):
     """
 
     :param num_exploration_per_intervention_at_intermediate_context:
@@ -14,7 +14,7 @@ def get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, 
     """
     # Check if the best intervention in the first context is 0
     if np.argmax(sampled_average_reward_matrix[0, :]) != 0:
-        return diff_in_best_reward
+        return 1
     max_expected_reward_per_state = np.max(sampled_average_reward_matrix, axis=1)
     # print("max_expected_reward_per_state=", max_expected_reward_per_state)
     expected_reward_per_intervention_at_state_0 = sampled_transition_probabilities @ max_expected_reward_per_state
@@ -29,14 +29,14 @@ def get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, 
         rev_expected_reward_per_intervention_at_state_0)
 
     if last_argmax_index != 0:
-        return diff_in_best_reward
+        return 1
     return 0
 
 
-def get_regret_simple(sampled_average_reward_vector, diff_in_best_reward=0.3):
+def get_prob_optimal_reward_simple(sampled_average_reward_vector):
     """
     We check if the best intervention across the interventions is 0 [corresponding to pair (0,0)].
-    Then the regret is 0, else it is diff_in_best_reward
+    Then the regret is 0, else it is 1
 
     :param num_exploration_per_intervention_at_intermediate_context:
     :param sampled_average_reward_matrix:
@@ -52,7 +52,7 @@ def get_regret_simple(sampled_average_reward_vector, diff_in_best_reward=0.3):
     last_argmax_index = len(sampled_average_reward_vector) - 1 - np.argmax(rev_sampled_average_reward_vector)
 
     if last_argmax_index != 0:
-        return diff_in_best_reward
+        return 1
     return 0
 
 
@@ -64,11 +64,11 @@ def run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward, stochas
         if not simple:
             sampled_transition_probabilities, sampled_average_reward_matrix = \
                 mymodule.run_one_sim(exploration_budget, stochastic_transition_matrix, reward_matrix)
-            regret = get_regret(sampled_transition_probabilities, sampled_average_reward_matrix, diff_in_best_reward)
+            regret = get_prob_optimal_reward(sampled_transition_probabilities, sampled_average_reward_matrix)
         else:
             sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, stochastic_transition_matrix,
                                                                  reward_matrix)
-            regret = get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
+            regret = get_prob_optimal_reward_simple(sampled_average_reward_vector)
         total_regret += regret
     average_regret = total_regret / num_sims
     return average_regret

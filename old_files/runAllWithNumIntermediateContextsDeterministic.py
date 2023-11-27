@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 
 def run_multiple_sims_multiple_models_deterministic(models, num_sims, exploration_budget, num_intermediate_contexts,
-                                                 num_interventions, default_reward, diff_in_best_reward):
+                                                    num_interventions, default_reward, diff_in_best_reward):
     total_regret = np.zeros((len(models)), dtype=np.float32)
 
     for i in range(num_sims):
@@ -23,12 +23,12 @@ def run_multiple_sims_multiple_models_deterministic(models, num_sims, exploratio
             if not simple_flag:
                 sampled_transition_probabilities, sampled_average_reward_matrix = \
                     mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix)
-                regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
-                                              diff_in_best_reward)
+                regret = utilities.get_prob_optimal_reward(sampled_transition_probabilities,
+                                                           sampled_average_reward_matrix)
             else:
                 sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, transition_matrix,
                                                                      reward_matrix)
-                regret = utilities.get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
+                regret = utilities.get_prob_optimal_reward_simple(sampled_average_reward_vector)
             total_regret[model_num] += regret
     average_regret = total_regret / num_sims
     return average_regret
@@ -64,9 +64,9 @@ if __name__ == "__main__":
 
         print("\nnum_intermediate_contexts=", num_intermediate_contexts)
         avg_regret_for_models = run_multiple_sims_multiple_models_deterministic(models, num_sims, exploration_budget,
-                                                                             num_intermediate_contexts,
-                                                                             num_interventions,
-                                                                             default_reward, diff_in_best_reward)
+                                                                                num_intermediate_contexts,
+                                                                                num_interventions,
+                                                                                default_reward, diff_in_best_reward)
         average_regret_matrix[context_index] = avg_regret_for_models
 
         # Set print options to display the entire array

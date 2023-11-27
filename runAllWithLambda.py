@@ -32,17 +32,17 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
                     sampled_transition_probabilities, sampled_average_reward_matrix = \
                         mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix,
                                              m_parameter_at_intermediate_states=mParam)
-                    regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
-                                                  diff_in_best_reward)
+                    regret = utilities.get_prob_optimal_reward(sampled_transition_probabilities,
+                                                               sampled_average_reward_matrix)
                 else:
                     sampled_transition_probabilities, sampled_average_reward_matrix = \
                         mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix)
-                    regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
-                                                  diff_in_best_reward)
+                    regret = utilities.get_prob_optimal_reward(sampled_transition_probabilities,
+                                                               sampled_average_reward_matrix)
             else:
                 sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, transition_matrix,
                                                                      reward_matrix)
-                regret = utilities.get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
+                regret = utilities.get_prob_optimal_reward_simple(sampled_average_reward_vector)
             total_regret[model_num] += regret
     average_regret = total_regret / num_sims
     return average_regret
@@ -86,16 +86,18 @@ if __name__ == "__main__":
             causal_parameters_diag_matrix = np.diag(causal_parameters_vector)
             # Generate the required matrices from the above hyperparameters
             if stochastic_flag:
-                transition_matrix_initialization = setup.generate_stochastic_transition_matrix(num_intermediate_contexts,
-                                                                                num_interventions,
-                                                                                diff_prob_transition)
+                transition_matrix_initialization = setup.generate_stochastic_transition_matrix(
+                    num_intermediate_contexts,
+                    num_interventions,
+                    diff_prob_transition)
             else:
-                transition_matrix_initialization = setup.generate_deterministic_transition_matrix(num_intermediate_contexts,
-                                                                                   num_interventions)
+                transition_matrix_initialization = setup.generate_deterministic_transition_matrix(
+                    num_intermediate_contexts,
+                    num_interventions)
 
-
-            lambdaValue, _ = utilities.solveFConvexProgram(transition_matrix_initialization, causal_parameters_diag_matrix)
-            lambdaValues[index] = lambdaValue**2
+            lambdaValue, _ = utilities.solveFConvexProgram(transition_matrix_initialization,
+                                                           causal_parameters_diag_matrix)
+            lambdaValues[index] = lambdaValue ** 2
 
             print("\nmParam=", mParam)
             avg_regret_for_models = run_multiple_sims_multiple_models(models, num_sims, exploration_budget,

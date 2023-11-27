@@ -25,12 +25,12 @@ def run_multiple_sims_multiple_models_stochastic(models, num_sims, exploration_b
             if not simple_flag:
                 sampled_transition_probabilities, sampled_average_reward_matrix = \
                     mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix)
-                regret = utilities.get_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
-                                              diff_in_best_reward)
+                regret = utilities.get_prob_optimal_reward(sampled_transition_probabilities,
+                                                           sampled_average_reward_matrix)
             else:
                 sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, transition_matrix,
                                                                      reward_matrix)
-                regret = utilities.get_regret_simple(sampled_average_reward_vector, diff_in_best_reward)
+                regret = utilities.get_prob_optimal_reward_simple(sampled_average_reward_vector)
             total_regret[model_num] += regret
     average_regret = total_regret / num_sims
     return average_regret
@@ -85,7 +85,8 @@ if __name__ == "__main__":
     headers = ['num_intermediate_contexts'] + models
 
     # Prepend the row headings
-    average_regret_matrix_for_print = np.hstack(np.array(num_intermediate_contexts_list).reshape(-1, 1),average_regret_matrix)
+    average_regret_matrix_for_print = np.hstack(np.array(num_intermediate_contexts_list).reshape(-1, 1),
+                                                average_regret_matrix)
     # Open the file for writing
     with open(file_path, 'w') as file:
         # Write the headers as the first line
