@@ -10,7 +10,7 @@ by our [experimental results](https://github.com/adaptiveContextualCausalBandits
 ## Features
 
 We study an algorithm to minimize regret in the causal contextual bandit setting. Here we consider bandits whose
-contexts can only be reached stochastically.
+contexts can be reached stochastically by interventions at a start state.
 
 - Implementation of a convex minimization approach to causal contextual bandit problems with adaptive context.
 - Experiments comparing various exploration strategies, including uniform exploration (UE), UCB-based, and Thompson
