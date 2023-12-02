@@ -28,7 +28,7 @@ def run_multiple_sims_multiple_models_deterministic(models, num_sims, exploratio
             else:
                 sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, transition_matrix,
                                                                      reward_matrix)
-                regret = utilities.get_prob_optimal_reward_simple(sampled_average_reward_vector)
+                regret = utilities.get_prob_optimal_reward_simple_setting(sampled_average_reward_vector)
             total_regret[model_num] += regret
     average_regret = total_regret / num_sims
     return average_regret

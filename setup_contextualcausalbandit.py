@@ -10,7 +10,7 @@ def generate_deterministic_transition_matrix(num_intermediate_contexts, num_inte
 
     :param num_intermediate_contexts: integer
     :param num_causal_variables: integer
-    :return: transition probability matrix: float R^{num_intermediate_contexts,2*num_causal_variables+1}
+    :return: transition probability matrix: float R^{2*num_causal_variables+1,num_intermediate_contexts}
 
     """
     # Create an identity matrix for the first num_intermediate_contexts rows
@@ -35,7 +35,7 @@ def generate_stochastic_transition_matrix(num_intermediate_contexts, num_interve
 
     :param num_intermediate_contexts: integer
     :param num_causal_variables: integer
-    :return: transition probability matrix: float R^{num_intermediate_contexts,2*num_causal_variables+1}
+    :return: transition probability matrix: float R^{2*num_causal_variables+1,num_intermediate_contexts}
 
     """
 
@@ -88,11 +88,12 @@ if __name__ == "__main__":
     stochastic_transition_matrix = generate_stochastic_transition_matrix(num_intermediate_contexts, num_interventions,
                                                                          diff_prob_transition)
     print("stochastic_transition_matrix =", stochastic_transition_matrix)
-
+    print("stochastic_transition_matrix.shape =", stochastic_transition_matrix.shape)
     default_reward = 0.5
     diff_in_best_reward = 0.3
     reward_matrix = generate_reward_matrix(num_intermediate_contexts, num_interventions, default_reward,
                                            diff_in_best_reward)
     print("reward_matrix = ", reward_matrix)
+    print("reward_matrix.shape = ", reward_matrix.shape)
 
     print("time taken to run = %0.6f seconds" % (time.time() - start_time))

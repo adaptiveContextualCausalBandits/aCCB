@@ -268,11 +268,26 @@ if __name__ == "__main__":
     print("sampled_transition_probabilities, =", sampled_transition_probabilities)
     print("sampled_average_reward_matrix, =", sampled_average_reward_matrix)
 
-    regret = utilities.get_prob_optimal_reward(sampled_transition_probabilities, sampled_average_reward_matrix)
-    print("regret = ", regret)
+    prob_of_optimal_reward = utilities.get_prob_optimal_reward(sampled_transition_probabilities,
+                                                               sampled_average_reward_matrix)
+    print("prob_of_optimal_reward = ", prob_of_optimal_reward)
+
+    simple_regret = utilities.get_simple_regret(sampled_transition_probabilities, sampled_average_reward_matrix,
+                                                stochastic_transition_matrix, reward_matrix)
+    print("simple_regret = ", simple_regret)
+
     num_sims = 100
-    average_regret = utilities.run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward,
-                                                 stochastic_transition_matrix, reward_matrix,
-                                                 simulation_module="convex_explorer")
-    print("average_regret=", average_regret)
+    average_prob_optimal_reward = utilities.run_multiple_sims(num_sims, exploration_budget,
+                                                              stochastic_transition_matrix, reward_matrix,
+                                                              simulation_module="convex_explorer",
+                                                              simple=False,
+                                                              regret_metric_name="prob_best_intervention")
+    print("average_prob_optimal_reward=", average_prob_optimal_reward)
+
+    average_simple_regret = utilities.run_multiple_sims(num_sims, exploration_budget,
+                                                              stochastic_transition_matrix, reward_matrix,
+                                                              simulation_module="convex_explorer",
+                                                              simple=False,
+                                                              regret_metric_name="simple_regret")
+    print("average_simple_regret=", average_simple_regret)
     print("time taken to run = %0.6f seconds" % (time.time() - start_time))

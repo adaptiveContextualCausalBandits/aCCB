@@ -89,19 +89,32 @@ if __name__ == "__main__":
     sampled_average_reward_vector = run_one_sim(exploration_budget, det_transition_matrix, reward_matrix)
 
     print("sampled_average_reward_vector, =", sampled_average_reward_vector)
-    regret = utilities.get_prob_optimal_reward_simple(sampled_average_reward_vector)
-    print("regret = ", regret)
+    prob_of_optimal_reward = utilities.get_prob_optimal_reward_simple_setting(sampled_average_reward_vector)
+    print("prob_of_optimal_reward = ", prob_of_optimal_reward)
     # stochastic transitions
     sampled_average_reward_vector = run_one_sim(exploration_budget, stochastic_transition_matrix, reward_matrix)
     print("sampled_average_reward_vector, =", sampled_average_reward_vector)
 
-    regret = utilities.get_prob_optimal_reward_simple(sampled_average_reward_vector)
-    print("regret = ", regret)
-    num_sims = 100
-    average_regret = utilities.run_multiple_sims(num_sims, exploration_budget, diff_in_best_reward,
-                                                 stochastic_transition_matrix, reward_matrix,
-                                                 simulation_module="ucb_over_intervention_pairs",simple=True)
-    print("average_regret=", average_regret)
+    prob_of_optimal_reward = utilities.get_prob_optimal_reward_simple_setting(sampled_average_reward_vector)
+    print("prob_of_optimal_reward = ", prob_of_optimal_reward)
 
+    simple_regret = utilities.get_simple_regret_simple_setting(sampled_average_reward_vector,
+                                                               stochastic_transition_matrix, reward_matrix)
+    print("simple_regret = ", simple_regret)
+
+    num_sims = 100
+    average_prob_optimal_reward = utilities.run_multiple_sims(num_sims, exploration_budget,
+                                                              stochastic_transition_matrix, reward_matrix,
+                                                              simulation_module="ucb_over_intervention_pairs",
+                                                              simple=True,
+                                                              regret_metric_name="prob_best_intervention")
+    print("average_prob_optimal_reward=", average_prob_optimal_reward)
+
+    average_simple_regret = utilities.run_multiple_sims(num_sims, exploration_budget,
+                                                        stochastic_transition_matrix, reward_matrix,
+                                                        simulation_module="ucb_over_intervention_pairs",
+                                                        simple=True,
+                                                        regret_metric_name="simple_regret")
+    print("average_simple_regret=", average_simple_regret)
     np.set_printoptions(threshold=False)
     print("time taken to run = %0.6f seconds" % (time.time() - start_time))

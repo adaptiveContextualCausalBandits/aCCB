@@ -8,7 +8,8 @@ from tqdm import tqdm
 
 def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_intermediate_contexts,
                                       num_interventions, diff_prob_transition, default_reward,
-                                      diff_in_best_reward, stochastic=True, mParam=2):
+                                      diff_in_best_reward, stochastic=True, mParam=2,
+                                      regret_metric_name="simple_regret"):
     total_regret = np.zeros((len(models)), dtype=np.float32)
 
     for i in range(num_sims):
@@ -42,7 +43,7 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
             else:
                 sampled_average_reward_vector = mymodule.run_one_sim(exploration_budget, transition_matrix,
                                                                      reward_matrix)
-                regret = utilities.get_prob_optimal_reward_simple(sampled_average_reward_vector)
+                regret = utilities.get_prob_optimal_reward_simple_setting(sampled_average_reward_vector)
             total_regret[model_num] += regret
     average_regret = total_regret / num_sims
     return average_regret
@@ -76,68 +77,71 @@ if __name__ == "__main__":
     num_sims = 500
     # The below is a flag for models that treat the problem as a one stage problem
     simple_modules = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
+    for regret_metric_name in ["simple_regret", "prob_best_intervention"]:
+        for stochastic_flag in [True, False]:
+            # The outputs are stored in the below matrix
+            average_regret_matrix = np.zeros((len(mParametersRange), len(models)), dtype=np.float32)
+            for index in tqdm(range(len(mParametersRange)), desc="Progress"):
+                mParam = mParametersRange[index]
+                causal_parameters_vector = mParam * np.ones(num_intermediate_contexts, dtype=np.int8)
+                causal_parameters_diag_matrix = np.diag(causal_parameters_vector)
+                # Generate the required matrices from the above hyperparameters
+                if stochastic_flag:
+                    transition_matrix_initialization = setup.generate_stochastic_transition_matrix(
+                        num_intermediate_contexts,
+                        num_interventions,
+                        diff_prob_transition)
+                else:
+                    transition_matrix_initialization = setup.generate_deterministic_transition_matrix(
+                        num_intermediate_contexts,
+                        num_interventions)
 
-    for stochastic_flag in [True, False]:
-        # The outputs are stored in the below matrix
-        average_regret_matrix = np.zeros((len(mParametersRange), len(models)), dtype=np.float32)
-        for index in tqdm(range(len(mParametersRange)), desc="Progress"):
-            mParam = mParametersRange[index]
-            causal_parameters_vector = mParam * np.ones(num_intermediate_contexts, dtype=np.int8)
-            causal_parameters_diag_matrix = np.diag(causal_parameters_vector)
-            # Generate the required matrices from the above hyperparameters
+                lambdaValue, _ = utilities.solveFConvexProgram(transition_matrix_initialization,
+                                                               causal_parameters_diag_matrix)
+                lambdaValues[index] = lambdaValue ** 2
+
+                print("\nmParam=", mParam)
+                avg_regret_for_models = utilities.run_multiple_sims_multiple_models(models, num_sims,
+                                                                                    exploration_budget,
+                                                                                    num_intermediate_contexts,
+                                                                                    num_interventions,
+                                                                                    diff_prob_transition,
+                                                                                    default_reward,
+                                                                                    diff_in_best_reward,
+                                                                                    stochastic=stochastic_flag,
+                                                                                    regret_metric_name=regret_metric_name,
+                                                                                    mParam=mParam)
+
+                avg_regret_for_models = np.minimum(avg_regret_for_models, 1.0)
+                average_regret_matrix[index] = avg_regret_for_models
+
+                # Set print options to display the entire array
+                np.set_printoptions(threshold=np.inf)
+                # Print the progress as a log
+                print("\naverage regret so far = ", average_regret_matrix)
+                # Reset the threshold for printing
+                np.set_printoptions(threshold=False)
+
+            # Now we saved the obtained values to file.
             if stochastic_flag:
-                transition_matrix_initialization = setup.generate_stochastic_transition_matrix(
-                    num_intermediate_contexts,
-                    num_interventions,
-                    diff_prob_transition)
+                file_path = "outputs/" + regret_metric_name + "_with_" + "lambda.txt"
             else:
-                transition_matrix_initialization = setup.generate_deterministic_transition_matrix(
-                    num_intermediate_contexts,
-                    num_interventions)
+                file_path = "outputs/" + regret_metric_name + "_with_" + "lambda_deterministic.txt"
 
-            lambdaValue, _ = utilities.solveFConvexProgram(transition_matrix_initialization,
-                                                           causal_parameters_diag_matrix)
-            lambdaValues[index] = lambdaValue ** 2
+            # Headers for each column
+            headers = ['lambda'] + models
+            # Prepend the row headings
+            average_regret_matrix_for_print = np.hstack((np.array(lambdaValues).reshape(-1, 1),
+                                                         average_regret_matrix))
 
-            print("\nmParam=", mParam)
-            avg_regret_for_models = run_multiple_sims_multiple_models(models, num_sims, exploration_budget,
-                                                                      num_intermediate_contexts,
-                                                                      num_interventions,
-                                                                      diff_prob_transition, default_reward,
-                                                                      diff_in_best_reward,
-                                                                      stochastic=stochastic_flag, mParam=mParam)
+            # Open the file for writing
+            with open(file_path, 'w') as file:
+                # Write the headers as the first line
+                header_line = '\t'.join(headers)
+                file.write(header_line + '\n')
 
-            # In this case we need the avg regret as a ratio to diff in best reward
-            avg_regret_for_models = avg_regret_for_models / diff_in_best_reward
-            average_regret_matrix[index] = avg_regret_for_models
-
-            # Set print options to display the entire array
-            np.set_printoptions(threshold=np.inf)
-            # Print the progress as a log
-            print("\naverage regret so far = ", average_regret_matrix)
-            # Reset the threshold for printing
-            np.set_printoptions(threshold=False)
-
-        # Now we saved the obtained values to file.
-        if stochastic_flag:
-            file_path = "outputs/model_regret_with_lambda.txt"
-        else:
-            file_path = "outputs/model_regret_with_lambda_deterministic.txt"
-        # Headers for each column
-        headers = ['lambda'] + models
-        # Prepend the row headings
-        average_regret_matrix_for_print = np.hstack((np.array(lambdaValues).reshape(-1, 1),
-                                                     average_regret_matrix))
-
-        # Open the file for writing
-        with open(file_path, 'w') as file:
-            # Write the headers as the first line
-            header_line = '\t'.join(
-                headers)  # Use a tab separator
-            file.write(header_line + '\n')
-
-            # noinspection PyTypeChecker
-            # Save the matrix to the file
-            np.savetxt(file, average_regret_matrix_for_print, delimiter='\t', fmt='%0.6f')
+                # noinspection PyTypeChecker
+                # Save the matrix to the file
+                np.savetxt(file, average_regret_matrix_for_print, delimiter='\t', fmt='%0.6f')
 
     print("time taken to run = %0.6f seconds" % (time.time() - start_time))
