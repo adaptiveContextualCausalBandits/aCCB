@@ -55,7 +55,7 @@ def plot_figure(input_file='outputs/model_regret_with_exploration_budget.txt',
     plt.savefig(output_filename, dpi=199)
 
     # plt.show()
-
+    plt.close()
     # Resetting the font style to default for future plots
     plt.rcdefaults()
 
