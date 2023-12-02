@@ -190,7 +190,7 @@ if __name__ == "__main__":
         xscale='linear')
 
     # -------------------------------
-    # NOW THE PLOTS FOR THE NEW FILES
+    # NOW THE PLOTS FOR SIMPLE REGRET
     # -------------------------------
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_exploration_budget.txt',
                                 output_filename='outputs/plots/simple_regret_with_exploration_budget.png',
