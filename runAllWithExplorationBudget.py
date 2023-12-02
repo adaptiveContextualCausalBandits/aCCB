@@ -5,23 +5,6 @@ import utilities
 import importlib
 from tqdm import tqdm
 
-
-def run_simulations_for_metric_with_feature(models=None, simple_models=None,
-                                            exploration_budget=10_000,
-                                            num_intermediate_contexts=20,
-                                            diff_prob_transition=0.1,
-                                            default_reward=0.5,
-                                            diff_in_best_reward=0.3,
-                                            num_sims=100, feature = "exploration_budget",
-                                            feature_values=[500, 1000, 2500, 5000, 7500, 10000, 12500, 15000, 20000, 25000]):
-    if models is None:
-        models = ['roundrobin_roundrobin', 'roundrobin_ucb', 'roundrobin_ts',
-                  'ucb_over_intervention_pairs', 'ts_over_intervention_pairs', 'convex_explorer']
-    if simple_models is None:
-        simple_models = ['ucb_over_intervention_pairs', 'ts_over_intervention_pairs']
-    return 0
-
-
 if __name__ == "__main__":
     start_time = time.time()
     np.random.seed(9)
