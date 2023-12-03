@@ -184,7 +184,6 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
     """
 
     :param models:
-
     :param num_sims:
     :param exploration_budget:
     :param num_intermediate_contexts:
@@ -196,6 +195,18 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
     :param regret_metric_name: Can either be "simple_regret" or "prob_best_intervention"
     :return:
     """
+    # print("models=",models)
+    # print("num_intermediate_contexts=",num_intermediate_contexts)
+    # print("num_interventions=", num_interventions)
+    # print("exploration_budget=", exploration_budget)
+    # print("diff_prob_transition=", diff_prob_transition)
+    # print("default_reward=", default_reward)
+    # print("diff_in_best_reward=", diff_in_best_reward)
+    # print("num_sims=", num_sims)
+    # print("m_param=", m_param)
+    # print("stochastic=", stochastic)
+    # print("regret_metric_name=", regret_metric_name)
+
     if simple_models is None:
         simple_models = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
 
@@ -253,6 +264,15 @@ def run_all_with_feature(models=None, simple_models=None,
                          varying_feature_values=None,
                          regret_metric_names=None, stochastic_flags=None,
                          ):
+    # print("num_intermediate_contexts=",num_intermediate_contexts)
+    # print("num_causal_variables=", num_causal_variables)
+    # print("exploration_budget=", exploration_budget)
+    # print("diff_prob_transition=", diff_prob_transition)
+    # print("default_reward=", default_reward)
+    # print("num_sims=", num_sims)
+    # print("m_param=", m_param)
+    # print("varying_feature_name=", varying_feature_name)
+    # print("varying_feature_values=", varying_feature_values)
     if models is None:
         models = ['roundrobin_roundrobin', 'roundrobin_ucb', 'roundrobin_ts',
                   'ucb_over_intervention_pairs', 'ts_over_intervention_pairs', 'convex_explorer']
@@ -269,23 +289,29 @@ def run_all_with_feature(models=None, simple_models=None,
             # The outputs are stored in the below matrix
             average_regret_metric_matrix = np.zeros((len(varying_feature_values), len(models)), dtype=np.float32)
             for index in tqdm(range(len(varying_feature_values)), desc="Progress"):
+                globals()['diff_in_best_reward'] = diff_in_best_reward
+                globals()['exploration_budget'] = exploration_budget
+                globals()['m_param'] = m_param
+                globals()['num_intermediate_contexts'] = num_intermediate_contexts
+
                 globals()[varying_feature_name] = varying_feature_values[index]
 
-                print("\n" + varying_feature_name + " = ", globals()[varying_feature_name])
+
+
                 if varying_feature_name == "num_intermediate_contexts":
                     num_causal_variables = num_intermediate_contexts
 
                 num_interventions = num_causal_variables * 2 + 1
                 avg_regret_metric_for_models = run_multiple_sims_multiple_models(models, num_sims,
-                                                                                 exploration_budget,
-                                                                                 num_intermediate_contexts,
+                                                                                 globals()['exploration_budget'],
+                                                                                 globals()['num_intermediate_contexts'],
                                                                                  num_interventions,
                                                                                  diff_prob_transition,
                                                                                  default_reward,
-                                                                                 diff_in_best_reward,
+                                                                                 globals()['diff_in_best_reward'],
                                                                                  stochastic=stochastic_flag,
                                                                                  regret_metric_name=regret_metric_name,
-                                                                                 m_param=m_param)
+                                                                                 m_param=globals()['m_param'])
 
                 avg_regret_metric_for_models = np.minimum(avg_regret_metric_for_models, 1.0)
                 average_regret_metric_matrix[index] = avg_regret_metric_for_models

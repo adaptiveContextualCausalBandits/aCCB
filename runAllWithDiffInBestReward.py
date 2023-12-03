@@ -48,7 +48,8 @@ if __name__ == "__main__":
                                                                                     default_reward,
                                                                                     diff_in_best_reward,
                                                                                     stochastic=stochastic_flag,
-                                                                                    regret_metric_name=regret_metric_name)
+                                                                                    regret_metric_name=regret_metric_name,
+                                                                                    m_param=2)
 
                 avg_regret_for_models = np.minimum(avg_regret_for_models, 1.0)
                 average_regret_matrix[index] = avg_regret_for_models
