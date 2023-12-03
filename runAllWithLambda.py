@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_intermediate_contexts,
                                       num_interventions, diff_prob_transition, default_reward,
-                                      diff_in_best_reward, stochastic=True, mParam=2,
+                                      diff_in_best_reward, stochastic=True, m_param=2,
                                       regret_metric_name="simple_regret"):
     total_regret = np.zeros((len(models)), dtype=np.float32)
 
@@ -26,13 +26,13 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
                                                      default_reward, diff_in_best_reward)
         for model_num in range(len(models)):
             model = models[model_num]
-            simple_flag = True if model in simple_modules else False
+            simple_flag = True if model in simple_models else False
             mymodule = importlib.import_module(model)
             if not simple_flag:
                 if model == "convex_explorer":
                     sampled_transition_probabilities, sampled_average_reward_matrix = \
                         mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix,
-                                             m_parameter_at_intermediate_states=mParam)
+                                             m_parameter_at_intermediate_states=m_param)
                     regret = utilities.get_prob_optimal_reward(sampled_transition_probabilities,
                                                                sampled_average_reward_matrix)
                 else:
@@ -70,20 +70,20 @@ if __name__ == "__main__":
     default_reward = 0.5
     diff_in_best_reward = 0.3
     # Set the varying parameter
-    mParametersRange = np.array(range(num_intermediate_contexts, 1, -1))
-    # mParametersRange = [10,4,2] # testing parameter range
-    lambdaValues = np.zeros(len(mParametersRange))
+    m_parametersRange = np.array(range(num_intermediate_contexts, 1, -1))
+    # m_parametersRange = [10,4,2] # testing parameter range
+    lambdaValues = np.zeros(len(m_parametersRange))
 
     num_sims = 500
     # The below is a flag for models that treat the problem as a one stage problem
-    simple_modules = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
+    simple_models = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
     for regret_metric_name in ["simple_regret", "prob_best_intervention"]:
         for stochastic_flag in [True, False]:
             # The outputs are stored in the below matrix
-            average_regret_matrix = np.zeros((len(mParametersRange), len(models)), dtype=np.float32)
-            for index in tqdm(range(len(mParametersRange)), desc="Progress"):
-                mParam = mParametersRange[index]
-                causal_parameters_vector = mParam * np.ones(num_intermediate_contexts, dtype=np.int8)
+            average_regret_matrix = np.zeros((len(m_parametersRange), len(models)), dtype=np.float32)
+            for index in tqdm(range(len(m_parametersRange)), desc="Progress"):
+                m_param = m_parametersRange[index]
+                causal_parameters_vector = m_param * np.ones(num_intermediate_contexts, dtype=np.int8)
                 causal_parameters_diag_matrix = np.diag(causal_parameters_vector)
                 # Generate the required matrices from the above hyperparameters
                 if stochastic_flag:
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                                                                causal_parameters_diag_matrix)
                 lambdaValues[index] = lambdaValue ** 2
 
-                print("\nmParam=", mParam)
+                print("\nm_param=", m_param)
                 avg_regret_for_models = utilities.run_multiple_sims_multiple_models(models, num_sims,
                                                                                     exploration_budget,
                                                                                     num_intermediate_contexts,
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                                                                                     diff_in_best_reward,
                                                                                     stochastic=stochastic_flag,
                                                                                     regret_metric_name=regret_metric_name,
-                                                                                    mParam=mParam)
+                                                                                    m_param=m_param)
 
                 avg_regret_for_models = np.minimum(avg_regret_for_models, 1.0)
                 average_regret_matrix[index] = avg_regret_for_models

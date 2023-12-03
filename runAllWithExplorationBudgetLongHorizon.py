@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     num_sims = 100
     # The below is a flag for models that treat the problem as a one stage problem
-    simple_modules = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
+    simple_models = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
     for regret_metric_name in ["simple_regret", "prob_best_intervention"]:
         for stochastic_flag in [True, False]:
             # The outputs are stored in the below matrix

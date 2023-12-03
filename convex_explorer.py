@@ -95,7 +95,7 @@ def sample_qhat(budget_per_intermediate_context_for_mi_estimation, num_intermedi
         CLT_sd_per_state_broadcast, size=None)
     # print("error_terms=",error_terms,error_terms.shape)
 
-    # Set the first mparam columns to 0
+    # Set the first m_param columns to 0
     qhat[:, :m_parameter_at_intermediate_state] = 0
     qhat[:, m_parameter_at_intermediate_state:num_intermediate_contexts] = 0.5 - error_terms
     # Now add the reversed error terms for the remaining columns
@@ -126,7 +126,7 @@ def estimate_rewards(budget_per_intermediate_context_for_reward_estimation, rewa
     error_terms = 0.5 * budget_per_intermediate_context_for_reward_estimation[:, np.newaxis] * error_terms
     # print("error_terms=", error_terms, error_terms.shape)
 
-    # Set the first mparam columns values due to Do interventions
+    # Set the first m_param columns values due to Do interventions
     num_times_intervention_at_state_seen[:, :m_parameter_at_intermediate_state] = \
         budget_per_intermediate_context_for_reward_estimation[:, np.newaxis] / (2 * m_parameter_at_intermediate_state)
     # print("num_times_intervention_at_state_seen after adding first do interventions =",

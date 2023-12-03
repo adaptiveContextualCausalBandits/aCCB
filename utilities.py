@@ -3,6 +3,7 @@ import importlib
 from gekko import GEKKO
 import cvxpy as cp
 import setup_contextualcausalbandit as setup
+from tqdm import tqdm
 
 
 def get_prob_optimal_reward(sampled_transition_probabilities, sampled_average_reward_matrix):
@@ -179,7 +180,7 @@ def getFMaxMin(PHat):
 def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_intermediate_contexts,
                                       num_interventions, diff_prob_transition, default_reward,
                                       diff_in_best_reward, stochastic=True, regret_metric_name="simple_regret",
-                                      simple_modules=None, mParam=2):
+                                      simple_models=None, m_param=2):
     """
 
     :param models:
@@ -195,8 +196,8 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
     :param regret_metric_name: Can either be "simple_regret" or "prob_best_intervention"
     :return:
     """
-    if simple_modules is None:
-        simple_modules = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
+    if simple_models is None:
+        simple_models = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
 
     total_regret_metric = np.zeros((len(models)), dtype=np.float32)
     for i in range(num_sims):
@@ -213,13 +214,13 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
                                                      default_reward, diff_in_best_reward)
         for model_num in range(len(models)):
             model = models[model_num]
-            simple_flag = True if model in simple_modules else False
+            simple_flag = True if model in simple_models else False
             mymodule = importlib.import_module(model)
             if not simple_flag:
                 if model == "convex_explorer":
                     sampled_transition_probabilities, sampled_average_reward_matrix = \
                         mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix,
-                                             m_parameter_at_intermediate_states=mParam)
+                                             m_parameter_at_intermediate_states=m_param)
                 else:
                     sampled_transition_probabilities, sampled_average_reward_matrix = \
                         mymodule.run_one_sim(exploration_budget, transition_matrix, reward_matrix)
@@ -242,3 +243,80 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
             total_regret_metric[model_num] += regret_metric
     average_regret_metric = total_regret_metric / num_sims
     return average_regret_metric
+
+
+def run_all_with_feature(models=None, simple_models=None,
+                         num_intermediate_contexts=5, num_causal_variables=5,
+                         exploration_budget=25_000, diff_prob_transition=0.1, default_reward=0.5,
+                         diff_in_best_reward=0.3, num_sims=100, m_param=2,
+                         varying_feature_name="diff_in_best_reward",
+                         varying_feature_values=None,
+                         regret_metric_names=None, stochastic_flags=None,
+                         ):
+    if models is None:
+        models = ['roundrobin_roundrobin', 'roundrobin_ucb', 'roundrobin_ts',
+                  'ucb_over_intervention_pairs', 'ts_over_intervention_pairs', 'convex_explorer']
+    if simple_models is None:
+        simple_models = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
+    if regret_metric_names is None:
+        regret_metric_names = ["simple_regret", "prob_best_intervention"]
+    if stochastic_flags is None:
+        stochastic_flags = [True, False]
+    if varying_feature_values is None:
+        varying_feature_values = [(x + 1) * 0.05 for x in range(9)]
+    for regret_metric_name in ["simple_regret", "prob_best_intervention"]:
+        for stochastic_flag in [True, False]:
+            # The outputs are stored in the below matrix
+            average_regret_metric_matrix = np.zeros((len(varying_feature_values), len(models)), dtype=np.float32)
+            for index in tqdm(range(len(varying_feature_values)), desc="Progress"):
+                globals()[varying_feature_name] = varying_feature_values[index]
+
+                print("\n" + varying_feature_name + " = ", globals()[varying_feature_name])
+                if varying_feature_name == "num_intermediate_contexts":
+                    num_causal_variables = num_intermediate_contexts
+
+                num_interventions = num_causal_variables * 2 + 1
+                avg_regret_metric_for_models = run_multiple_sims_multiple_models(models, num_sims,
+                                                                                 exploration_budget,
+                                                                                 num_intermediate_contexts,
+                                                                                 num_interventions,
+                                                                                 diff_prob_transition,
+                                                                                 default_reward,
+                                                                                 diff_in_best_reward,
+                                                                                 stochastic=stochastic_flag,
+                                                                                 regret_metric_name=regret_metric_name,
+                                                                                 m_param=m_param)
+
+                avg_regret_metric_for_models = np.minimum(avg_regret_metric_for_models, 1.0)
+                average_regret_metric_matrix[index] = avg_regret_metric_for_models
+
+                # Set print options to display the entire array
+                np.set_printoptions(threshold=np.inf)
+                # Print the progress as a log
+                print("\naverage regret so far = ", average_regret_metric_matrix)
+                # Reset the threshold for printing
+
+                np.set_printoptions(threshold=False)
+
+            # Now we saved the obtained values to file.
+            if stochastic_flag:
+                file_path = "outputs/" + regret_metric_name + "_with_" + varying_feature_name + ".txt"
+            else:
+                file_path = "outputs/" + regret_metric_name + "_with_" + varying_feature_name + "_deterministic.txt"
+
+            # Headers for each column
+            headers = [varying_feature_name] + models
+            # Prepend the row headings
+            average_regret_metric_matrix_for_print = np.hstack((np.array(varying_feature_values).reshape(-1, 1),
+                                                                average_regret_metric_matrix))
+
+            # Open the file for writing
+            with open(file_path, 'w') as file:
+                # Write the headers as the first line
+                header_line = '\t'.join(headers)  # Use a tab separator
+                file.write(header_line + '\n')
+
+                # noinspection PyTypeChecker
+                # Save the matrix to the file
+                np.savetxt(file, average_regret_metric_matrix_for_print, delimiter='\t', fmt='%0.6f')
+    return 1

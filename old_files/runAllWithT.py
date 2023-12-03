@@ -20,7 +20,7 @@ def run_multiple_sims_multiple_models_deterministic(models, num_sims, exploratio
                                                      default_reward, diff_in_best_reward)
         for model_num in range(len(models)):
             model = models[model_num]
-            simple_flag = True if model in simple_modules else False
+            simple_flag = True if model in simple_models else False
             mymodule = importlib.import_module(model)
             if not simple_flag:
                 sampled_transition_probabilities, sampled_average_reward_matrix = \
@@ -50,7 +50,7 @@ def run_multiple_sims_multiple_models_stochastic(models, num_sims, exploration_b
                                                      default_reward, diff_in_best_reward)
         for model_num in range(len(models)):
             model = models[model_num]
-            simple_flag = True if model in simple_modules else False
+            simple_flag = True if model in simple_models else False
             mymodule = importlib.import_module(model)
             if not simple_flag:
                 sampled_transition_probabilities, sampled_average_reward_matrix = \
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     num_sims = 500
     # The below is a flag for models that treat the problem as a one stage problem
-    simple_modules = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
+    simple_models = ["ucb_over_intervention_pairs", "ts_over_intervention_pairs"]
     # The outputs are stored in the below matrix
     average_regret_matrix = np.zeros((len(exploration_budgets), len(models)), dtype=np.float32)
     for budget_index in tqdm(range(len(exploration_budgets)), desc="Budget Progress"):
