@@ -38,14 +38,14 @@ bandit algorithms. The results are detailed in the following plots:
 ### Plot for Simple Regret with Lambda Value
 First we plot the simple regret with lambda, which is the instance dependent causal parameter given the 
 problem instance. 
-![Probability of Simple Regret with Lambda](outputs/plots/simple_regret_with_lambda.png "Plot for simple regret with Lambda value.")
+![Probability of Simple Regret with Lambda](plots/simple_regret_with_lambda.png "Plot for simple regret with Lambda value.")
 
 We note that the simple regret is much lower for our Algorithm Convex Explorer than all other comparable methods.
 
 ### Plot for Simple Regret with number of Intermediate Contexts
 
 We then plot the simple regret with number of intermediate contexts.
-![Probability of Simple Regret with Number of Intermediate Contexts](outputs/plots/simple_regret_with_num_intermediate_contexts.png "Plot for simple regret with number of intermediate contexts.")
+![Probability of Simple Regret with Number of Intermediate Contexts](plots/simple_regret_with_num_intermediate_contexts.png "Plot for simple regret with number of intermediate contexts.")
 
 We find that as the number of contexts goes up, the simple regret for all the methods
 comes down. This is because of the stochastic transitions. Since the maximum expected regret
@@ -58,7 +58,7 @@ stochastic transitions to the intermediate contexts.
 We now plot the probability of best intervention with amount of time spent exploring. Note that here, we consider
 deterministic transitions to the intermediate contexts. i.e. On choosing an intervention at the start state, one may
 deterministically transition to one of the intermediate states.
-![Probability of Best Intervention vs Exploration Budget](outputs/plots/prob_best_intervention_with_exploration_budget_deterministic.png "Plot for probability of choosing the best intervention with exploration budget.")
+![Probability of Best Intervention vs Exploration Budget](plots/prob_best_intervention_with_exploration_budget_deterministic.png "Plot for probability of choosing the best intervention with exploration budget.")
 
 As expected, our Algorithm performs better than other comparable Algorithms.
 
@@ -66,7 +66,7 @@ As expected, our Algorithm performs better than other comparable Algorithms.
 
 Now to show that the deterministic setting is much easier than the stochastic setting (for any algorithm), we
 plot the simple regret in both these settings below.
-![Simple Regret for stochastic and deterministic transitions](outputs/plots/simple_regret_with_exploration_budget_together.png "Plot for Simple Regret for stochastic and deterministic transitions.")
+![Simple Regret for stochastic and deterministic transitions](plots/simple_regret_with_exploration_budget_together.png "Plot for Simple Regret for stochastic and deterministic transitions.")
 
 Note the faster convergence for the deterministic setting than for the stochastic setting. This is most ostensibly seen for the Convex Explorer Algorithm,
 but also noticeable for the other algorithms.
@@ -78,7 +78,7 @@ through the following figure. The difference in best reward is the reward differ
 between the best intervention, and other interventions in the problem setup. The higher
 this number is, the easier an algorithm should find it to discover the best intervention.
 
-![Simple regret vs prob best intervention with difference in best reward](outputs/plots/simple_regret_and_prob_best_with_diff_in_best_reward.png "Plot for Simple regret vs prob best intervention with difference in best reward.")
+![Simple regret vs prob best intervention with difference in best reward](plots/simple_regret_and_prob_best_with_diff_in_best_reward.png "Plot for Simple regret vs prob best intervention with difference in best reward.")
 
 Notice that as the difference in best reward increases, the simple regret first
 increases and then decreases. The point of increase and decrease is different
@@ -92,7 +92,7 @@ as the regret is the probability of a mistake times the expected cost of the mis
 Finally, we would like to show the difference between the plots for probability of not finding the best intervention 
 and the simple regret with number of intermediate contexts.
 
-![Simple regret vs prob best intervention with number of intermediate contexts](outputs/plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts.png "Plot for Simple regret vs prob best intervention with number of intermediate contexts.")
+![Simple regret vs prob best intervention with number of intermediate contexts](plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts.png "Plot for Simple regret vs prob best intervention with number of intermediate contexts.")
 
 We note that as the number of intermediate contexts increases, we have a harder problem,
 and hence the probability of not finding the best intervention only increases. This is because
@@ -105,7 +105,7 @@ probability of reaching the intermediate context which contains the best reward.
 
 We note that such a phenomenon does not arise in the case of deterministic transitions, as seen in the plot below.
 
-![Simple regret vs prob best intervention with number of intermediate contexts in the deterministic setting](outputs/plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts_deterministic.png "Plot for Simple regret vs prob best intervention with number of intermediate contexts in the deterministic setting.")
+![Simple regret vs prob best intervention with number of intermediate contexts in the deterministic setting](plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts_deterministic.png "Plot for Simple regret vs prob best intervention with number of intermediate contexts in the deterministic setting.")
 
 
 While this section highlights some of our important experiments, we carried out many
@@ -117,7 +117,7 @@ more experiments, which we delineate in the following subsection.
 We have compiled additional plots in the folders below:
 
 - [Basic Plots](https://drive.google.com/drive/folders/1VMkeenDM797NtsR25_Fnsc3t3yZkuqy1?usp=sharing)
-- [Additional Plots](outputs/plots/)
+- [Additional Plots](plots/)
 
 
 ## Getting Started with the Code
@@ -182,7 +182,7 @@ python run_plotters.py
 ```
 
 The results should now be available in the `outputs/` folder as tables and the plots for these 
-would be available in the `outputs/plots/` folder.
+would be available in the `plots/` folder.
 
 
 

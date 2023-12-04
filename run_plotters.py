@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # ---------------------------------
 
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_exploration_budget.txt',
-                                output_filename='outputs/plots/simple_regret_with_exploration_budget.png',
+                                output_filename='plots/simple_regret_with_exploration_budget.png',
                                 x_axis_label_in_data="exploration_budget",
                                 label_x_axis='Exploration Budget T',
                                 label_y_axis='Simple Regret',
@@ -23,7 +23,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_exploration_budget_deterministic.txt',
-                                output_filename='outputs/plots/simple_regret_with_exploration_budget_deterministic.png',
+                                output_filename='plots/simple_regret_with_exploration_budget_deterministic.png',
                                 x_axis_label_in_data="exploration_budget",
                                 label_x_axis='Exploration Budget T',
                                 label_y_axis='Simple Regret',
@@ -34,7 +34,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_diff_in_best_reward.txt',
-                                output_filename='outputs/plots/simple_regret_with_diff_in_best_reward.png',
+                                output_filename='plots/simple_regret_with_diff_in_best_reward.png',
                                 x_axis_label_in_data="diff_in_best_reward",
                                 label_x_axis='Difference in Best Reward R',
                                 label_y_axis='Simple Regret',
@@ -45,7 +45,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_diff_in_best_reward_deterministic.txt',
-                                output_filename='outputs/plots/simple_regret_with_diff_in_best_reward_deterministic.png',
+                                output_filename='plots/simple_regret_with_diff_in_best_reward_deterministic.png',
                                 x_axis_label_in_data="diff_in_best_reward",
                                 label_x_axis='Difference in Best Reward R',
                                 label_y_axis='Simple Regret',
@@ -56,7 +56,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_exploration_budget_long_horizon.txt',
-                                output_filename='outputs/plots/simple_regret_with_exploration_budget_long_horizon.png',
+                                output_filename='plots/simple_regret_with_exploration_budget_long_horizon.png',
                                 x_axis_label_in_data="exploration_budget",
                                 label_x_axis='Exploration Time T',
                                 label_y_axis='Simple Regret',
@@ -67,7 +67,7 @@ if __name__ == "__main__":
                                 xscale='log')
     plotter_utility.plot_figure(
         input_file='outputs/simple_regret_with_exploration_budget_long_horizon_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_with_exploration_budget_long_horizon_deterministic.png',
+        output_filename='plots/simple_regret_with_exploration_budget_long_horizon_deterministic.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis='Simple Regret',
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         xscale='log')
 
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_lambda.txt',
-                                output_filename='outputs/plots/simple_regret_with_lambda.png',
+                                output_filename='plots/simple_regret_with_lambda.png',
                                 x_axis_label_in_data="lambda",
                                 label_x_axis='Lambda Value λ',
                                 label_y_axis='Simple Regret',
@@ -88,7 +88,7 @@ if __name__ == "__main__":
                                 markers=None,
                                 xscale='linear')
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_lambda_deterministic.txt',
-                                output_filename='outputs/plots/simple_regret_with_lambda_deterministic.png',
+                                output_filename='plots/simple_regret_with_lambda_deterministic.png',
                                 x_axis_label_in_data="lambda",
                                 label_x_axis='Lambda Value λ',
                                 label_y_axis='Simple Regret',
@@ -99,7 +99,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_num_intermediate_contexts.txt',
-                                output_filename='outputs/plots/simple_regret_with_num_intermediate_contexts.png',
+                                output_filename='plots/simple_regret_with_num_intermediate_contexts.png',
                                 x_axis_label_in_data="num_intermediate_contexts",
                                 label_x_axis='Number of Intermediate Contexts',
                                 label_y_axis='Simple Regret',
@@ -109,7 +109,7 @@ if __name__ == "__main__":
                                 markers=None,
                                 xscale='linear')
     plotter_utility.plot_figure(input_file='outputs/simple_regret_with_num_intermediate_contexts_deterministic.txt',
-                                output_filename='outputs/plots/simple_regret_with_num_intermediate_contexts_deterministic.png',
+                                output_filename='plots/simple_regret_with_num_intermediate_contexts_deterministic.png',
                                 x_axis_label_in_data="num_intermediate_contexts",
                                 label_x_axis='Number of Intermediate Contexts',
                                 label_y_axis='Simple Regret',
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------
 
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_exploration_budget.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_exploration_budget.png',
+                                output_filename='plots/prob_best_intervention_with_exploration_budget.png',
                                 x_axis_label_in_data="exploration_budget",
                                 label_x_axis='Exploration Time T',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -135,7 +135,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_exploration_budget_deterministic.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_exploration_budget_deterministic.png',
+                                output_filename='plots/prob_best_intervention_with_exploration_budget_deterministic.png',
                                 x_axis_label_in_data="exploration_budget",
                                 label_x_axis='Exploration Time T',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -146,7 +146,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_diff_in_best_reward.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_diff_in_best_reward.png',
+                                output_filename='plots/prob_best_intervention_with_diff_in_best_reward.png',
                                 x_axis_label_in_data="diff_in_best_reward",
                                 label_x_axis='Difference in Best Reward R',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -157,7 +157,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_diff_in_best_reward_deterministic.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_diff_in_best_reward_deterministic.png',
+                                output_filename='plots/prob_best_intervention_with_diff_in_best_reward_deterministic.png',
                                 x_axis_label_in_data="diff_in_best_reward",
                                 label_x_axis='Difference in Best Reward R',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -168,7 +168,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_exploration_budget_long_horizon.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_exploration_budget_long_horizon.png',
+                                output_filename='plots/prob_best_intervention_with_exploration_budget_long_horizon.png',
                                 x_axis_label_in_data="exploration_budget",
                                 label_x_axis='Exploration Time T',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -179,7 +179,7 @@ if __name__ == "__main__":
                                 xscale='log')
     plotter_utility.plot_figure(
         input_file='outputs/prob_best_intervention_with_exploration_budget_long_horizon_deterministic.txt',
-        output_filename='outputs/plots/prob_best_intervention_with_exploration_budget_long_horizon_deterministic.png',
+        output_filename='plots/prob_best_intervention_with_exploration_budget_long_horizon_deterministic.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis='Probability of not finding the Best Intervention',
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         xscale='log')
 
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_lambda.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_lambda.png',
+                                output_filename='plots/prob_best_intervention_with_lambda.png',
                                 x_axis_label_in_data="lambda",
                                 label_x_axis='Lambda Value λ',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -200,7 +200,7 @@ if __name__ == "__main__":
                                 markers=None,
                                 xscale='linear')
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_lambda_deterministic.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_lambda_deterministic.png',
+                                output_filename='plots/prob_best_intervention_with_lambda_deterministic.png',
                                 x_axis_label_in_data="lambda",
                                 label_x_axis='Lambda Value λ',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -211,7 +211,7 @@ if __name__ == "__main__":
                                 xscale='linear')
 
     plotter_utility.plot_figure(input_file='outputs/prob_best_intervention_with_num_intermediate_contexts.txt',
-                                output_filename='outputs/plots/prob_best_intervention_with_num_intermediate_contexts.png',
+                                output_filename='plots/prob_best_intervention_with_num_intermediate_contexts.png',
                                 x_axis_label_in_data="num_intermediate_contexts",
                                 label_x_axis='Number of Intermediate Contexts',
                                 label_y_axis='Probability of not finding the Best Intervention',
@@ -222,7 +222,7 @@ if __name__ == "__main__":
                                 xscale='linear')
     plotter_utility.plot_figure(
         input_file='outputs/prob_best_intervention_with_num_intermediate_contexts_deterministic.txt',
-        output_filename='outputs/plots/prob_best_intervention_with_num_intermediate_contexts_deterministic.png',
+        output_filename='plots/prob_best_intervention_with_num_intermediate_contexts_deterministic.png',
         x_axis_label_in_data="num_intermediate_contexts",
         label_x_axis='Number of Intermediate Contexts',
         label_y_axis='Probability of not finding the Best Intervention',
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/simple_regret_with_exploration_budget.txt',
         input_file2='outputs/simple_regret_with_exploration_budget_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_with_exploration_budget_together.png',
+        output_filename='plots/simple_regret_with_exploration_budget_together.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis='Simple Regret',
@@ -254,7 +254,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/simple_regret_with_diff_in_best_reward.txt',
         input_file2='outputs/simple_regret_with_diff_in_best_reward_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_with_diff_in_best_reward_together.png',
+        output_filename='plots/simple_regret_with_diff_in_best_reward_together.png',
         x_axis_label_in_data="diff_in_best_reward",
         label_x_axis='Difference in Best Reward R',
         label_y_axis='Simple Regret',
@@ -269,7 +269,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/simple_regret_with_exploration_budget_long_horizon.txt',
         input_file2='outputs/simple_regret_with_exploration_budget_long_horizon_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_with_exploration_budget_long_horizon_together.png',
+        output_filename='plots/simple_regret_with_exploration_budget_long_horizon_together.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis='Simple Regret',
@@ -283,7 +283,7 @@ if __name__ == "__main__":
 
     plotter_utility.plot_figure_deterministic_stochastic(input_file='outputs/simple_regret_with_lambda.txt',
                                                          input_file2='outputs/simple_regret_with_lambda_deterministic.txt',
-                                                         output_filename='outputs/plots/simple_regret_with_lambda_together.png',
+                                                         output_filename='plots/simple_regret_with_lambda_together.png',
                                                          x_axis_label_in_data="lambda",
                                                          label_x_axis='Lambda Value λ',
                                                          label_y_axis='Simple Regret',
@@ -298,7 +298,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/simple_regret_with_num_intermediate_contexts.txt',
         input_file2='outputs/simple_regret_with_num_intermediate_contexts_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_with_num_intermediate_contexts_together.png',
+        output_filename='plots/simple_regret_with_num_intermediate_contexts_together.png',
         x_axis_label_in_data="num_intermediate_contexts",
         label_x_axis='Number of Intermediate Contexts',
         label_y_axis='Simple Regret',
@@ -317,7 +317,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/prob_best_intervention_with_exploration_budget.txt',
         input_file2='outputs/prob_best_intervention_with_exploration_budget_deterministic.txt',
-        output_filename='outputs/plots/prob_best_intervention_with_exploration_budget_together.png',
+        output_filename='plots/prob_best_intervention_with_exploration_budget_together.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis='Probability of not finding the Best Intervention',
@@ -332,7 +332,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/prob_best_intervention_with_diff_in_best_reward.txt',
         input_file2='outputs/prob_best_intervention_with_diff_in_best_reward_deterministic.txt',
-        output_filename='outputs/plots/prob_best_intervention_with_diff_in_best_reward_together.png',
+        output_filename='plots/prob_best_intervention_with_diff_in_best_reward_together.png',
         x_axis_label_in_data="diff_in_best_reward",
         label_x_axis='Difference in Best Reward R',
         label_y_axis='Probability of not finding the Best Intervention',
@@ -347,7 +347,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/prob_best_intervention_with_exploration_budget_long_horizon.txt',
         input_file2='outputs/prob_best_intervention_with_exploration_budget_long_horizon_deterministic.txt',
-        output_filename='outputs/plots/prob_best_intervention_with_exploration_budget_long_horizon_together.png',
+        output_filename='plots/prob_best_intervention_with_exploration_budget_long_horizon_together.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis='Probability of not finding the Best Intervention',
@@ -361,7 +361,7 @@ if __name__ == "__main__":
 
     plotter_utility.plot_figure_deterministic_stochastic(input_file='outputs/prob_best_intervention_with_lambda.txt',
                                                          input_file2='outputs/prob_best_intervention_with_lambda_deterministic.txt',
-                                                         output_filename='outputs/plots/prob_best_intervention_with_lambda_together.png',
+                                                         output_filename='plots/prob_best_intervention_with_lambda_together.png',
                                                          x_axis_label_in_data="lambda",
                                                          label_x_axis='Lambda Value λ',
                                                          label_y_axis='Probability of not finding the Best Intervention',
@@ -376,7 +376,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_deterministic_stochastic(
         input_file='outputs/prob_best_intervention_with_num_intermediate_contexts.txt',
         input_file2='outputs/prob_best_intervention_with_num_intermediate_contexts_deterministic.txt',
-        output_filename='outputs/plots/prob_best_intervention_with_num_intermediate_contexts_together.png',
+        output_filename='plots/prob_best_intervention_with_num_intermediate_contexts_together.png',
         x_axis_label_in_data="num_intermediate_contexts",
         label_x_axis='Number of Intermediate Contexts',
         label_y_axis='Probability of not finding the Best Intervention',
@@ -394,7 +394,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_exploration_budget.txt',
         input_file2='outputs/simple_regret_with_exploration_budget.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_exploration_budget.png',
+        output_filename='plots/simple_regret_and_prob_best_with_exploration_budget.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -410,7 +410,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_exploration_budget_deterministic.txt',
         input_file2='outputs/simple_regret_with_exploration_budget_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_exploration_budget_deterministic.png',
+        output_filename='plots/simple_regret_and_prob_best_with_exploration_budget_deterministic.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -426,7 +426,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_exploration_budget_long_horizon.txt',
         input_file2='outputs/simple_regret_with_exploration_budget_long_horizon.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_exploration_budget_long_horizon.png',
+        output_filename='plots/simple_regret_and_prob_best_with_exploration_budget_long_horizon.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -442,7 +442,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_exploration_budget_long_horizon_deterministic.txt',
         input_file2='outputs/simple_regret_with_exploration_budget_long_horizon_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_exploration_budget_long_horizon_deterministic.png',
+        output_filename='plots/simple_regret_and_prob_best_with_exploration_budget_long_horizon_deterministic.png',
         x_axis_label_in_data="exploration_budget",
         label_x_axis='Exploration Time T',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -458,7 +458,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_diff_in_best_reward.txt',
         input_file2='outputs/simple_regret_with_diff_in_best_reward.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_diff_in_best_reward.png',
+        output_filename='plots/simple_regret_and_prob_best_with_diff_in_best_reward.png',
         x_axis_label_in_data="diff_in_best_reward",
         label_x_axis='Difference in Best Reward',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -474,7 +474,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_diff_in_best_reward_deterministic.txt',
         input_file2='outputs/simple_regret_with_diff_in_best_reward_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_diff_in_best_reward_deterministic.png',
+        output_filename='plots/simple_regret_and_prob_best_with_diff_in_best_reward_deterministic.png',
         x_axis_label_in_data="diff_in_best_reward",
         label_x_axis='Difference in Best Reward',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -490,7 +490,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_lambda.txt',
         input_file2='outputs/simple_regret_with_lambda.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_lambda.png',
+        output_filename='plots/simple_regret_and_prob_best_with_lambda.png',
         x_axis_label_in_data="lambda",
         label_x_axis='Lambda Value λ',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -506,7 +506,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_lambda_deterministic.txt',
         input_file2='outputs/simple_regret_with_lambda_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_lambda_deterministic.png',
+        output_filename='plots/simple_regret_and_prob_best_with_lambda_deterministic.png',
         x_axis_label_in_data="lambda",
         label_x_axis='Lambda Value λ',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -522,7 +522,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_num_intermediate_contexts.txt',
         input_file2='outputs/simple_regret_with_num_intermediate_contexts.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts.png',
+        output_filename='plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts.png',
         x_axis_label_in_data="num_intermediate_contexts",
         label_x_axis='Number of Intermediate Contexts',
         label_y_axis1='Probability of not finding the Best Intervention',
@@ -538,7 +538,7 @@ if __name__ == "__main__":
     plotter_utility.plot_figure_prob_best_simple_regret(
         input_file1='outputs/prob_best_intervention_with_num_intermediate_contexts_deterministic.txt',
         input_file2='outputs/simple_regret_with_num_intermediate_contexts_deterministic.txt',
-        output_filename='outputs/plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts_deterministic.png',
+        output_filename='plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts_deterministic.png',
         x_axis_label_in_data="num_intermediate_contexts",
         label_x_axis='Number of Intermediate Contexts',
         label_y_axis1='Probability of not finding the Best Intervention',

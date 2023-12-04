@@ -268,7 +268,7 @@ def get_lambda_values(m_parameters_range, num_intermediate_contexts, num_causal_
     :return: lambda values
     """
     # Initialize the output vector
-    lambda_values = np.zeros(m_parameters_range.shape, dtype=np.float32)
+    lambda_values = np.zeros(len(m_parameters_range), dtype=np.float32)
 
     # Generate the required matrices from the above hyperparameters
     num_interventions = num_causal_variables * 2 + 1
