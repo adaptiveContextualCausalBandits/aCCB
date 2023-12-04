@@ -81,7 +81,8 @@ python runAllWithExplorationBudgetLongHorizon.py
 python runAllWithLambda.py
 python runAllWithNumIntermediateContexts.py
 ```
-The above may take of the order of 70 minutes on an Intel I7 CPU (8th Gen)
+
+The above may take of the order of an hour on an Intel i7 CPU.
 
 
 ### Plot the results of the experiments
