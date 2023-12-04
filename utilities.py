@@ -326,9 +326,10 @@ def run_all_with_feature(models=None, simple_models=None,
                 globals()[varying_feature_name] = varying_feature_values[index]
 
                 if varying_feature_name == "num_intermediate_contexts":
-                    num_causal_variables = num_intermediate_contexts
+                    num_causal_variables = globals()['num_intermediate_contexts']
 
                 num_interventions = num_causal_variables * 2 + 1
+
                 avg_regret_metric_for_models = run_multiple_sims_multiple_models(models, num_sims,
                                                                                  globals()['exploration_budget'],
                                                                                  globals()['num_intermediate_contexts'],

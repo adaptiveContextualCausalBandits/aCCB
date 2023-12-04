@@ -101,7 +101,7 @@ if __name__ == "__main__":
         diff_in_best_reward=0.3,
         num_sims=100,
         m_param=2,
-        varying_feature_name="num_intermediate_context",
+        varying_feature_name="num_intermediate_contexts",
         varying_feature_values=[2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 25, 50, 100]
     )
     experiments.append(experiment)
