@@ -82,7 +82,7 @@ python runAllWithLambda.py
 python runAllWithNumIntermediateContexts.py
 ```
 
-The above may take of the order of an hour on an Intel i7 CPU.
+The above may be approximately five times faster due to parallelism (given sufficient compute threads).
 
 
 ### Plot the results of the experiments
@@ -91,13 +91,46 @@ The above may take of the order of an hour on an Intel i7 CPU.
 python run_plotters.py
 ```
 
+The results should now be available in the `outputs/` folder as tables and the plots for these 
+would be available in the `outputs/plots/` folder.
+
 ## Results
 
 Our experiments demonstrate the efficacy of the convex minimization approach, particularly in comparison to traditional
 bandit algorithms. The results are detailed in the following plots:
 
-- [Variation of Expected Regret with Exploration Budget](https://drive.google.com/file/d/1qWSt7Kv-sEi85dD4sjflLnQqRC7V_TCN/view?usp=sharing)
-- [Additional Experiments](https://drive.google.com/drive/folders/1VMkeenDM797NtsR25_Fnsc3t3yZkuqy1?usp=sharing)
+### Plot for Simple Regret with Lambda Value
+First we plot the simple regret with lambda, which is the instance dependent causal parameter given the 
+problem instance. 
+![Probability of Simple Regret with Lambda](outputs/plots/simple_regret_with_lambda.png "Plot for simple regret with Lambda value.")
+
+We note that the simple regret is much lower for our Algorithm Convex Explorer than all other comparable methods.
+
+### Plot for Simple Regret with number of Intermediate Contexts
+
+We then plot the simple regret with number of intermediate contexts.
+![Probability of Simple Regret with Number of Intermediate Contexts](outputs/plots/simple_regret_with_num_intermediate_contexts.png "Plot for simple regret with number of intermediate contexts.")
+
+We find that as the number of contexts goes up, the simple regret for all the methods
+comes down. This is because of the stochastic transitions. Since the maximum expected regret
+for each intervention (that is not the best intervention) comes down, we find that
+the simple regret for all the methods falls with number of intermediate contexts when we have approximately uniform
+stochastic transitions to the intermediate contexts.
+
+### Plot for Probability of Best Intervention with Exploration Budget
+
+We now plot the probability of best intervention with amount of time spent exploring. Note that here, we consider
+deterministic transitions to the intermediate contexts. i.e. On choosing an intervention at the start state, one may
+deterministically transition to one of the intermediate states.
+![Probability of Best Intervention vs Exploration Budget](outputs/plots/prob_best_intervention_with_exploration_budget_deterministic.png "Plot for probability of choosing the best intervention with exploration budget.")
+
+As expected, our Algorithm performs better than other comparable Algorithms.
+
+We have compiled additional plots in the folders below:
+
+- [Basic Plots](https://drive.google.com/drive/folders/1VMkeenDM797NtsR25_Fnsc3t3yZkuqy1?usp=sharing)
+- [Additional Plots](outputs/plots/)
+
 
 ## Contributing
 
