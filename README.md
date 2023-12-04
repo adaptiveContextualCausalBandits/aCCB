@@ -38,7 +38,7 @@ available for template and content interventions.
 - Other requirements
   in [requirements.txt](https://github.com/adaptiveContextualCausalBandits/aCCB/blob/main/requirements.txt).
 
-### Installation
+### Initial Setup
 
 Clone the repository to your local machine:
 
@@ -46,15 +46,45 @@ Clone the repository to your local machine:
 git clone https://github.com/adaptiveContextualCausalBandits/aCCB.git
 ```
 
-Install the required dependencies:
+Check into the required directory and create a local environment
+```bash
+cd aCCB
+# create a virtual environment
+python -m venv venv
 
+# activate the virtual environment
+source venv/Scripts/activate
+```
+
+Install the required dependencies in the virtual environment:
 ```bash
 pip install -r requirements.txt
 ```
+NOTE: Since python version 3.12 does not come with setuptools pre-installed, additional setup may be required for the 
+cvxpy package. Suggested to go for earlier versions of python.
 
 ### Running the Experiments
 
 To run the experiments, use the following command:
+
+```bash
+python runAllExperiments.py
+```
+
+The above step may take a few hours depending on the speed of your machine. If you instead want to run the experiments 
+in parallel, you may instead run the following four commands on four separate terminals.
+
+```bash
+python runAllWithDiffInBestReward.py
+python runAllWithExplorationBudget.py
+python runAllWithExplorationBudgetLongHorizon.py
+python runAllWithLambda.py
+python runAllWithNumIntermediateContexts.py
+```
+The above may take of the order of 70 minutes on an Intel I7 CPU (8th Gen)
+
+
+### Plot the results of the experiments
 
 ```bash
 python run_plotters.py

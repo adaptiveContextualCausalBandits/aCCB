@@ -256,6 +256,40 @@ def run_multiple_sims_multiple_models(models, num_sims, exploration_budget, num_
     return average_regret_metric
 
 
+def get_lambda_values(m_parameters_range, num_intermediate_contexts, num_causal_variables, diff_prob_transition,
+                      stochastic_flag):
+    """
+
+    :param m_parameters_range:
+    :param num_intermediate_contexts:
+    :param num_causal_variables:
+    :param diff_prob_transition:
+    :param stochastic_flag:
+    :return: lambda values
+    """
+    # Initialize the output vector
+    lambda_values = np.zeros(m_parameters_range.shape, dtype=np.float32)
+
+    # Generate the required matrices from the above hyperparameters
+    num_interventions = num_causal_variables * 2 + 1
+    if stochastic_flag:
+        transition_matrix_initialization = setup.generate_stochastic_transition_matrix(
+            num_intermediate_contexts, num_interventions, diff_prob_transition)
+    else:
+        transition_matrix_initialization = setup.generate_deterministic_transition_matrix(
+            num_intermediate_contexts, num_interventions)
+
+    for index in range(len(m_parameters_range)):
+        causal_parameters_vector = m_parameters_range[index] * np.ones(num_intermediate_contexts,
+                                                                       dtype=np.int8)
+        causal_parameters_diag_matrix = np.diag(causal_parameters_vector)
+        lambdaValue, _ = solveFConvexProgram(transition_matrix_initialization,
+                                             causal_parameters_diag_matrix)
+        lambda_values[index] = lambdaValue ** 2
+
+    return lambda_values
+
+
 def run_all_with_feature(models=None, simple_models=None,
                          num_intermediate_contexts=5, num_causal_variables=5,
                          exploration_budget=25_000, diff_prob_transition=0.1, default_reward=0.5,
@@ -263,16 +297,8 @@ def run_all_with_feature(models=None, simple_models=None,
                          varying_feature_name="diff_in_best_reward",
                          varying_feature_values=None,
                          regret_metric_names=None, stochastic_flags=None,
+                         x_axis_values_for_print=None
                          ):
-    # print("num_intermediate_contexts=",num_intermediate_contexts)
-    # print("num_causal_variables=", num_causal_variables)
-    # print("exploration_budget=", exploration_budget)
-    # print("diff_prob_transition=", diff_prob_transition)
-    # print("default_reward=", default_reward)
-    # print("num_sims=", num_sims)
-    # print("m_param=", m_param)
-    # print("varying_feature_name=", varying_feature_name)
-    # print("varying_feature_values=", varying_feature_values)
     if models is None:
         models = ['roundrobin_roundrobin', 'roundrobin_ucb', 'roundrobin_ts',
                   'ucb_over_intervention_pairs', 'ts_over_intervention_pairs', 'convex_explorer']
@@ -284,6 +310,8 @@ def run_all_with_feature(models=None, simple_models=None,
         stochastic_flags = [True, False]
     if varying_feature_values is None:
         varying_feature_values = [(x + 1) * 0.05 for x in range(9)]
+    if x_axis_values_for_print is None:
+        x_axis_values_for_print = varying_feature_values
     for regret_metric_name in ["simple_regret", "prob_best_intervention"]:
         for stochastic_flag in [True, False]:
             # The outputs are stored in the below matrix
@@ -295,8 +323,6 @@ def run_all_with_feature(models=None, simple_models=None,
                 globals()['num_intermediate_contexts'] = num_intermediate_contexts
 
                 globals()[varying_feature_name] = varying_feature_values[index]
-
-
 
                 if varying_feature_name == "num_intermediate_contexts":
                     num_causal_variables = num_intermediate_contexts
@@ -332,8 +358,15 @@ def run_all_with_feature(models=None, simple_models=None,
 
             # Headers for each column
             headers = [varying_feature_name] + models
+
+            # Let the x-axis values for the lambda experiment be equal to lambda rather than the m_params.
+            if varying_feature_name == "m_param":
+                x_axis_values_for_print = get_lambda_values(x_axis_values_for_print, num_intermediate_contexts,
+                                                            num_causal_variables, diff_prob_transition, stochastic_flag)
+
+
             # Prepend the row headings
-            average_regret_metric_matrix_for_print = np.hstack((np.array(varying_feature_values).reshape(-1, 1),
+            average_regret_metric_matrix_for_print = np.hstack((np.array(x_axis_values_for_print).reshape(-1, 1),
                                                                 average_regret_metric_matrix))
 
             # Open the file for writing
@@ -345,4 +378,6 @@ def run_all_with_feature(models=None, simple_models=None,
                 # noinspection PyTypeChecker
                 # Save the matrix to the file
                 np.savetxt(file, average_regret_metric_matrix_for_print, delimiter='\t', fmt='%0.6f')
+
+    # Success flag
     return 1
