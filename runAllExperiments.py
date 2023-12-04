@@ -55,7 +55,7 @@ if __name__ == "__main__":
         diff_prob_transition=0.1,
         default_reward=0.5,
         diff_in_best_reward=0.3,
-        num_sims=100,
+        num_sims=500,
         m_param=2,
         varying_feature_name="exploration_budget",
         varying_feature_values=[500, 1000, 2500, 5000, 7500, 10000, 12500, 15000, 20000, 25000]
