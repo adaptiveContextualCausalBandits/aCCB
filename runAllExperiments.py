@@ -13,7 +13,8 @@ def set_experiment_dict(
         num_sims=100,
         m_param=2,
         varying_feature_name="diff_in_best_reward",
-        varying_feature_values=[0.01] + [(x + 1) * 0.05 for x in range(9)]
+        varying_feature_values=[0.01] + [(x + 1) * 0.05 for x in range(9)],
+        experiment_variation=""
 ):
     out_dict = {}
     out_dict["num_intermediate_contexts"] = num_intermediate_contexts
@@ -27,6 +28,7 @@ def set_experiment_dict(
     out_dict["m_param"] = m_param
     out_dict["varying_feature_name"] = varying_feature_name
     out_dict["varying_feature_values"] = varying_feature_values
+    out_dict["experiment_variation"] = experiment_variation
     return out_dict
 
 
@@ -72,7 +74,8 @@ if __name__ == "__main__":
         num_sims=100,
         m_param=2,
         varying_feature_name="exploration_budget",
-        varying_feature_values=[100, 250, 500, 1000, 2500, 5000, 7500, 10000, 12500, 15000, 20000, 25000, 100000]
+        varying_feature_values=[100, 250, 500, 1000, 2500, 5000, 7500, 10000, 12500, 15000, 20000, 25000, 100000],
+        experiment_variation="_long_horizon"
     )
     experiments.append(experiment)
 
@@ -118,7 +121,8 @@ if __name__ == "__main__":
                                        num_sims=experiment["num_sims"],
                                        m_param=experiment["m_param"],
                                        varying_feature_name=experiment["varying_feature_name"],
-                                       varying_feature_values=experiment["varying_feature_values"])
+                                       varying_feature_values=experiment["varying_feature_values"],
+                                       experiment_variation=experiment["experiment_variation"])
         experiment_number += 1
 
         print("time taken to run experiment = %0.6f seconds" % (time.time() - exp_start_time))

@@ -297,7 +297,8 @@ def run_all_with_feature(models=None, simple_models=None,
                          varying_feature_name="diff_in_best_reward",
                          varying_feature_values=None,
                          regret_metric_names=None, stochastic_flags=None,
-                         x_axis_values_for_print=None
+                         x_axis_values_for_print=None,
+                         experiment_variation=''
                          ):
     if models is None:
         models = ['roundrobin_roundrobin', 'roundrobin_ucb', 'roundrobin_ts',
@@ -352,9 +353,9 @@ def run_all_with_feature(models=None, simple_models=None,
 
             # Now we saved the obtained values to file.
             if stochastic_flag:
-                file_path = "outputs/" + regret_metric_name + "_with_" + varying_feature_name + ".txt"
+                file_path = "outputs/" + regret_metric_name + "_with_" + varying_feature_name + experiment_variation + ".txt"
             else:
-                file_path = "outputs/" + regret_metric_name + "_with_" + varying_feature_name + "_deterministic.txt"
+                file_path = "outputs/" + regret_metric_name + "_with_" + varying_feature_name + experiment_variation + "_deterministic.txt"
 
             # Headers for each column
             headers = [varying_feature_name] + models
@@ -363,7 +364,6 @@ def run_all_with_feature(models=None, simple_models=None,
             if varying_feature_name == "m_param":
                 x_axis_values_for_print = get_lambda_values(x_axis_values_for_print, num_intermediate_contexts,
                                                             num_causal_variables, diff_prob_transition, stochastic_flag)
-
 
             # Prepend the row headings
             average_regret_metric_matrix_for_print = np.hstack((np.array(x_axis_values_for_print).reshape(-1, 1),

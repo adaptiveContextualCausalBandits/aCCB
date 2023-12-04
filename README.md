@@ -30,7 +30,97 @@ available for template and content interventions.
 
 ![Advertiser Motivation Figure below](images/adCCB.svg "Motivation for Adaptive Causal Contextual Bandits through an advertising example.")
 
-## Getting Started
+## Results
+
+Our experiments demonstrate the efficacy of the convex minimization approach, particularly in comparison to traditional
+bandit algorithms. The results are detailed in the following plots:
+
+### Plot for Simple Regret with Lambda Value
+First we plot the simple regret with lambda, which is the instance dependent causal parameter given the 
+problem instance. 
+![Probability of Simple Regret with Lambda](outputs/plots/simple_regret_with_lambda.png "Plot for simple regret with Lambda value.")
+
+We note that the simple regret is much lower for our Algorithm Convex Explorer than all other comparable methods.
+
+### Plot for Simple Regret with number of Intermediate Contexts
+
+We then plot the simple regret with number of intermediate contexts.
+![Probability of Simple Regret with Number of Intermediate Contexts](outputs/plots/simple_regret_with_num_intermediate_contexts.png "Plot for simple regret with number of intermediate contexts.")
+
+We find that as the number of contexts goes up, the simple regret for all the methods
+comes down. This is because of the stochastic transitions. Since the maximum expected regret
+for each intervention (that is not the best intervention) comes down, we find that
+the simple regret for all the methods falls with number of intermediate contexts when we have approximately uniform
+stochastic transitions to the intermediate contexts.
+
+### Plot for probability of not finding the best intervention with exploration budget
+
+We now plot the probability of best intervention with amount of time spent exploring. Note that here, we consider
+deterministic transitions to the intermediate contexts. i.e. On choosing an intervention at the start state, one may
+deterministically transition to one of the intermediate states.
+![Probability of Best Intervention vs Exploration Budget](outputs/plots/prob_best_intervention_with_exploration_budget_deterministic.png "Plot for probability of choosing the best intervention with exploration budget.")
+
+As expected, our Algorithm performs better than other comparable Algorithms.
+
+### Plot for Simple Regret with Exploration Budget for Stochastic and Deterministic Transitions
+
+Now to show that the deterministic setting is much easier than the stochastic setting (for any algorithm), we
+plot the simple regret in both these settings below.
+![Simple Regret for stochastic and deterministic transitions](outputs/plots/simple_regret_with_exploration_budget_together.png "Plot for Simple Regret for stochastic and deterministic transitions.")
+
+Note the faster convergence for the deterministic setting than for the stochastic setting. This is most ostensibly seen for the Convex Explorer Algorithm,
+but also noticeable for the other algorithms.
+
+### Plot for Simple Regret and probability of not finding the best intervention with difference in best reward
+
+We highlight that the simple regret metric is distinct from the probability of best intervention
+through the following figure. The difference in best reward is the reward difference
+between the best intervention, and other interventions in the problem setup. The higher
+this number is, the easier an algorithm should find it to discover the best intervention.
+
+![Simple regret vs prob best intervention with difference in best reward](outputs/plots/simple_regret_and_prob_best_with_diff_in_best_reward.png "Plot for Simple regret vs prob best intervention with difference in best reward.")
+
+Notice that as the difference in best reward increases, the simple regret first
+increases and then decreases. The point of increase and decrease is different
+for different algorithms. We note that as the difference between the best intervention
+and other interventions increases, the probability of the algorithm not returning
+the best intervention decreases. On the other hand, the simple regret may first increase
+as the regret is the probability of a mistake times the expected cost of the mistake (difference in best intervention).
+
+### Plot for Simple Regret and probability of not finding the best intervention with Number of Intermediate Contexts
+
+Finally, we would like to show the difference between the plots for probability of not finding the best intervention 
+and the simple regret with number of intermediate contexts.
+
+![Simple regret vs prob best intervention with number of intermediate contexts](outputs/plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts.png "Plot for Simple regret vs prob best intervention with number of intermediate contexts.")
+
+We note that as the number of intermediate contexts increases, we have a harder problem,
+and hence the probability of not finding the best intervention only increases. This is because
+we split the budget available amongst more intermediate contexts. Therefore, it is fairly straightforward to see that
+with a constant budget, we will end up with lower probabilities of finding the best intervention, when the number
+of intermediate contexts increase. On the other hand, in the figure on the right, we
+can see that as the number of intermediate contexts increase, the cost of not finding the best
+intervention, in expectation, decreases. This is because, even the best intervention at the start state, has a lower
+probability of reaching the intermediate context which contains the best reward. 
+
+We note that such a phenomenon does not arise in the case of deterministic transitions, as seen in the plot below.
+
+![Simple regret vs prob best intervention with number of intermediate contexts in the deterministic setting](outputs/plots/simple_regret_and_prob_best_with_with_num_intermediate_contexts_deterministic.png "Plot for Simple regret vs prob best intervention with number of intermediate contexts in the deterministic setting.")
+
+
+While this section highlights some of our important experiments, we carried out many
+more experiments, which we delineate in the following subsection.
+
+
+## Additional Plots
+
+We have compiled additional plots in the folders below:
+
+- [Basic Plots](https://drive.google.com/drive/folders/1VMkeenDM797NtsR25_Fnsc3t3yZkuqy1?usp=sharing)
+- [Additional Plots](outputs/plots/)
+
+
+## Getting Started with the Code
 
 ### Prerequisites
 
@@ -94,42 +184,6 @@ python run_plotters.py
 The results should now be available in the `outputs/` folder as tables and the plots for these 
 would be available in the `outputs/plots/` folder.
 
-## Results
-
-Our experiments demonstrate the efficacy of the convex minimization approach, particularly in comparison to traditional
-bandit algorithms. The results are detailed in the following plots:
-
-### Plot for Simple Regret with Lambda Value
-First we plot the simple regret with lambda, which is the instance dependent causal parameter given the 
-problem instance. 
-![Probability of Simple Regret with Lambda](outputs/plots/simple_regret_with_lambda.png "Plot for simple regret with Lambda value.")
-
-We note that the simple regret is much lower for our Algorithm Convex Explorer than all other comparable methods.
-
-### Plot for Simple Regret with number of Intermediate Contexts
-
-We then plot the simple regret with number of intermediate contexts.
-![Probability of Simple Regret with Number of Intermediate Contexts](outputs/plots/simple_regret_with_num_intermediate_contexts.png "Plot for simple regret with number of intermediate contexts.")
-
-We find that as the number of contexts goes up, the simple regret for all the methods
-comes down. This is because of the stochastic transitions. Since the maximum expected regret
-for each intervention (that is not the best intervention) comes down, we find that
-the simple regret for all the methods falls with number of intermediate contexts when we have approximately uniform
-stochastic transitions to the intermediate contexts.
-
-### Plot for Probability of Best Intervention with Exploration Budget
-
-We now plot the probability of best intervention with amount of time spent exploring. Note that here, we consider
-deterministic transitions to the intermediate contexts. i.e. On choosing an intervention at the start state, one may
-deterministically transition to one of the intermediate states.
-![Probability of Best Intervention vs Exploration Budget](outputs/plots/prob_best_intervention_with_exploration_budget_deterministic.png "Plot for probability of choosing the best intervention with exploration budget.")
-
-As expected, our Algorithm performs better than other comparable Algorithms.
-
-We have compiled additional plots in the folders below:
-
-- [Basic Plots](https://drive.google.com/drive/folders/1VMkeenDM797NtsR25_Fnsc3t3yZkuqy1?usp=sharing)
-- [Additional Plots](outputs/plots/)
 
 
 ## Contributing
